@@ -3,11 +3,41 @@ import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:intl/intl.dart';
 
+import 'package:godevi_app/app/data/providers/api_provider.dart';
+import 'package:godevi_app/app/routes/app_pages.dart';
+import 'package:godevi_app/app/modules/reservation/views/payment_webview.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
 
 class BookingController extends GetxController {
   final PackageModel? package = Get.arguments as PackageModel?;
   final AuthService _authService = Get.find<AuthService>();
+
+  bool get isEvent {
+    if (package == null) return false;
+    print(
+      "DEBUG: Checking isEvent. Type: ${package!.type}, Category: ${package!.categoryName}",
+    );
+    return (package!.type?.toLowerCase() == 'event') ||
+        (package!.categoryName?.toLowerCase().contains('event') ?? false);
+  }
+
+  bool get isHomestay {
+    if (package == null) return false;
+    print(
+      "DEBUG: Checking isHomestay. Type: ${package!.type}, Category: ${package!.categoryName}",
+    );
+    return (package!.type?.toLowerCase() == 'homestay') ||
+        (package!.categoryName?.toLowerCase().contains('homestay') ?? false);
+  }
+
+  bool get isTour {
+    if (package == null) return false;
+    print(
+      "DEBUG: Checking isTour. Type: ${package!.type}, Category: ${package!.categoryName}",
+    );
+    return (package!.type?.toLowerCase() == 'tour') ||
+        (package!.categoryName?.toLowerCase().contains('tour') ?? false);
+  }
 
   // Customer Info
   final nameController = TextEditingController();
@@ -92,9 +122,81 @@ class BookingController extends GetxController {
     super.onClose();
   }
 
-  void submitBooking() {
+  final ApiProvider _apiProvider = Get.find<ApiProvider>();
+  final RxBool isLoading = false.obs;
+
+  void submitBooking() async {
+    if (package == null) return;
+
     // Validate inputs
-    // Call API (Future implementation)
-    Get.snackbar("Success", "Booking submitted! (Simulation)");
+    if (nameController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        paxController.text.isEmpty) {
+      Get.snackbar("Error", "Please fill all required fields");
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      final data = {
+        'customer_name': nameController.text,
+        'customer_email': emailController.text,
+        'customer_phone': phoneController.text,
+        'customer_address': addressController.text,
+        'qty': paxController.text,
+        'special_note': noteController.text.isEmpty ? '-' : noteController.text,
+      };
+
+      Response response;
+
+      // Determine checkout type based on package info
+      if (isEvent) {
+        data['event_id'] = package!.id.toString();
+        response = await _apiProvider.checkoutEvent(data);
+      } else if (isHomestay) {
+        if (dateController.text.isEmpty) {
+          Get.snackbar("Error", "Please select check-in date");
+          isLoading.value = false;
+          return;
+        }
+        data['homestay_id'] = package!.id.toString();
+        data['check_in'] = dateController.text;
+        response = await _apiProvider.checkoutHomestay(data);
+      } else {
+        // Fallback: Assume it's a Tour if not Event or Homestay
+        print("DEBUG: defaulted to Tour checkout.");
+        if (dateController.text.isEmpty) {
+          Get.snackbar("Error", "Please select check-in date");
+          isLoading.value = false;
+          return;
+        }
+        data['tour_id'] = package!.id.toString();
+        data['check_in'] = dateController.text;
+        response = await _apiProvider.checkoutTour(data);
+      }
+
+      if (response.statusCode == 200 && response.body['status'] == true) {
+        final responseData = response.body['data'];
+        final String? linkPayment = responseData['link_payment'];
+
+        if (linkPayment != null) {
+          // Reset stack to Reservation Menu, then open Payment.
+          Get.offAllNamed(Routes.RESERVATION);
+          Get.to(() => PaymentWebView(url: linkPayment));
+        } else {
+          Get.snackbar("Success", "Booking Success but no payment link found.");
+          Get.offAllNamed(Routes.RESERVATION);
+        }
+      } else {
+        Get.snackbar("Error", response.body['message'] ?? "Checkout Failed");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

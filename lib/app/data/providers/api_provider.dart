@@ -68,4 +68,10 @@ class ApiProvider extends GetConnect {
       get('/transaction/paid/$email');
   Future<Response> getCancelTransactions(String email) =>
       get('/transaction/cancel/$email');
+  Future<Response> checkoutEvent(Map<String, dynamic> data) =>
+      post('/v2/checkout/event', FormData(data));
+  Future<Response> checkoutHomestay(Map<String, dynamic> data) =>
+      post('/v2/checkout/homestay', FormData(data));
+  Future<Response> checkoutTour(Map<String, dynamic> data) =>
+      post('/v2/checkout/tour', FormData(data));
 }

@@ -152,6 +152,21 @@ class BookingView extends GetView<BookingController> {
                   : "Book Information",
             ),
             const SizedBox(height: 16),
+            // Check-in Date (Only for Tour and Homestay)
+            if (controller.package?.type != 'event') ...[
+              GestureDetector(
+                onTap: () => controller.selectDate(context),
+                child: AbsorbPointer(
+                  child: _buildTextField(
+                    "Check-in Date",
+                    controller.dateController,
+                    suffixIcon: Icons.calendar_today,
+                    hint: "Select Date",
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             _buildTextField(
               "Pax",
               controller.paxController,
