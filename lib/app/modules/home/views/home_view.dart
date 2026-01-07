@@ -48,7 +48,7 @@ class HomeView extends GetView<HomeController> {
                   const CategorySelector(),
 
                   // Popular Villages
-                  SectionHeader(title: 'Popular Villages', onShowAll: () {}),
+                  SectionHeader(title: 'Popular Villages'),
                   SizedBox(
                     height: 180,
                     child: ListView.builder(
@@ -63,7 +63,7 @@ class HomeView extends GetView<HomeController> {
                   ),
 
                   // Best Tour Packages
-                  SectionHeader(title: 'Best Tour Packages', onShowAll: () {}),
+                  SectionHeader(title: 'Best Tour Packages'),
                   ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,

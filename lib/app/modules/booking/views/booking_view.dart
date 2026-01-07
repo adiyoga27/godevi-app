@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class BookingView extends StatelessWidget {
   const BookingView({Key? key}) : super(key: key);

@@ -11,6 +11,14 @@ import 'package:godevi_app/app/modules/category/views/category_list_view.dart';
 import 'package:godevi_app/app/modules/category/bindings/category_list_binding.dart';
 import 'package:godevi_app/app/modules/register/views/register_view.dart';
 import 'package:godevi_app/app/modules/register/bindings/register_binding.dart';
+import 'package:godevi_app/app/modules/profile/views/profile_view.dart';
+import 'package:godevi_app/app/modules/profile/bindings/profile_binding.dart';
+import 'package:godevi_app/app/modules/faq/views/faq_view.dart';
+import 'package:godevi_app/app/modules/faq/bindings/faq_binding.dart';
+import 'package:godevi_app/app/modules/about/views/about_view.dart';
+import 'package:godevi_app/app/modules/about/bindings/about_binding.dart';
+import 'package:godevi_app/app/modules/change_password/views/change_password_view.dart';
+import 'package:godevi_app/app/modules/change_password/bindings/change_password_binding.dart';
 
 part 'app_routes.dart';
 
@@ -51,6 +59,26 @@ class AppPages {
       name: _Paths.REGISTER,
       page: () => const RegisterView(),
       binding: RegisterBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.FAQ,
+      page: () => const FaqView(),
+      binding: FaqBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT,
+      page: () => const AboutView(),
+      binding: AboutBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
     ),
   ];
 }

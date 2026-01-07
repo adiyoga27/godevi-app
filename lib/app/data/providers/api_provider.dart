@@ -17,6 +17,13 @@ class ApiProvider extends GetConnect {
       return request;
     });
 
+    httpClient.addResponseModifier((request, response) {
+      print('\x1B[33m[API Response] ${request.method} ${request.url}\x1B[0m');
+      print('\x1B[33mStatus: ${response.statusCode}\x1B[0m');
+      print('\x1B[33mBody: ${response.bodyString}\x1B[0m');
+      return response;
+    });
+
     super.onInit();
   }
 
@@ -24,6 +31,14 @@ class ApiProvider extends GetConnect {
   Future<Response> login(String email, String password) {
     final form = FormData({'email': email, 'password': password});
     return post('/auth/login', form);
+  }
+
+  Future<Response> resetPassword(String passwordNew, String passwordConfirm) {
+    final form = FormData({
+      'password_new': passwordNew,
+      'password_confirm': passwordConfirm,
+    });
+    return post('/v2/auth/reset-password', form);
   }
 
   Future<Response> register(Map<String, dynamic> data) =>

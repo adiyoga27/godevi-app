@@ -10,6 +10,9 @@ abstract class Routes {
   static const ARTICLE_DETAIL = _Paths.ARTICLE_DETAIL;
   static const CATEGORY_LIST = _Paths.CATEGORY_LIST;
   static const REGISTER = _Paths.REGISTER;
+  static const FAQ = _Paths.FAQ;
+  static const ABOUT = _Paths.ABOUT;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
 }
 
 abstract class _Paths {
@@ -22,4 +25,7 @@ abstract class _Paths {
   static const ARTICLE_DETAIL = '/article-detail';
   static const CATEGORY_LIST = '/category-list';
   static const REGISTER = '/register';
+  static const FAQ = '/faq';
+  static const ABOUT = '/about';
+  static const CHANGE_PASSWORD = '/change-password';
 }
