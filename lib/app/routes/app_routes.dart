@@ -15,6 +15,8 @@ abstract class Routes {
   static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
   static const VILLAGE_LIST = _Paths.VILLAGE_LIST;
   static const VILLAGE_DETAIL = _Paths.VILLAGE_DETAIL;
+  static const RESERVATION = _Paths.RESERVATION;
+  static const TRANSACTION_DETAIL = _Paths.TRANSACTION_DETAIL;
 }
 
 abstract class _Paths {
@@ -32,4 +34,6 @@ abstract class _Paths {
   static const CHANGE_PASSWORD = '/change-password';
   static const VILLAGE_LIST = '/village-list';
   static const VILLAGE_DETAIL = '/village-detail';
+  static const RESERVATION = '/reservation';
+  static const TRANSACTION_DETAIL = '/transaction-detail';
 }

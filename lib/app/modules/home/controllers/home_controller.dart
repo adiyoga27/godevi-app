@@ -60,7 +60,7 @@ class HomeController extends GetxController {
   void navigateToBooking() {
     final authService = Get.find<AuthService>();
     if (authService.isLoggedIn.value) {
-      Get.toNamed('/booking');
+      Get.toNamed('/reservation');
     } else {
       Get.toNamed('/login');
     }

@@ -54,10 +54,14 @@ class EventCard extends StatelessWidget {
               name: event.name,
               description: event.description,
               price: event.price,
+              disc: event.disc,
               defaultImg: event.defaultImg,
-              categoryName: event.location, // Use location as category/location
-              duration: event.dateEvent, // Use date as duration/time
-              // Add other fields if available or leave null
+              categoryName: event.categoryName ?? event.location,
+              duration: event.duration ?? event.dateEvent,
+              itenaries: event.itenaries,
+              inclusion: event.inclusion,
+              term: event.term,
+              type: 'event',
             );
             Get.toNamed(Routes.DETAIL, arguments: package);
           },

@@ -14,6 +14,7 @@ class PackageModel {
   String? term;
   String? duration;
   String? preparation;
+  String? type; // 'tour' or 'event'
 
   PackageModel({
     this.id,
@@ -31,6 +32,7 @@ class PackageModel {
     this.term,
     this.duration,
     this.preparation,
+    this.type = 'tour',
   });
 
   PackageModel.fromJson(Map<String, dynamic> json) {

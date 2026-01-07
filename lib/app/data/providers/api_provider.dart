@@ -60,4 +60,12 @@ class ApiProvider extends GetConnect {
   Future<Response> getTours() => get('/v2/tours');
   Future<Response> getEvents() => get('/v2/events');
   Future<Response> getHomestays() => get('/v2/homestay');
+
+  // Transactions
+  Future<Response> getUnpaidTransactions(String email) =>
+      get('/transaction/unpaid/$email');
+  Future<Response> getPaidTransactions(String email) =>
+      get('/transaction/paid/$email');
+  Future<Response> getCancelTransactions(String email) =>
+      get('/transaction/cancel/$email');
 }

@@ -24,6 +24,9 @@ import 'package:godevi_app/app/modules/village_list/views/village_list_view.dart
 import 'package:godevi_app/app/modules/village_list/bindings/village_list_binding.dart';
 import 'package:godevi_app/app/modules/village_detail/views/village_detail_view.dart';
 import 'package:godevi_app/app/modules/village_detail/bindings/village_detail_binding.dart';
+import 'package:godevi_app/app/modules/reservation/bindings/reservation_binding.dart';
+import 'package:godevi_app/app/modules/reservation/views/reservation_view.dart';
+import 'package:godevi_app/app/modules/reservation/views/transaction_detail_view.dart';
 
 part 'app_routes.dart';
 
@@ -98,6 +101,15 @@ class AppPages {
       name: _Paths.VILLAGE_DETAIL,
       page: () => const VillageDetailView(),
       binding: VillageDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.RESERVATION,
+      page: () => const ReservationView(),
+      binding: ReservationBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRANSACTION_DETAIL,
+      page: () => const TransactionDetailView(),
     ),
   ];
 }

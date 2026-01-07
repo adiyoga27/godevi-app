@@ -46,7 +46,7 @@ class BookingView extends GetView<BookingController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tour Package Visualization
+            // Package Visualization (Standard for both Tour and Event)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: CachedNetworkImage(
@@ -71,6 +71,12 @@ class BookingView extends GetView<BookingController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        controller.package?.type == 'event'
+                            ? "Event Name"
+                            : "Tour Packages Name",
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                      Text(
                         controller.package?.name ?? '-',
                         style: const TextStyle(
                           fontSize: 16,
@@ -80,8 +86,17 @@ class BookingView extends GetView<BookingController> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        controller.package?.categoryName ?? '-',
+                        controller.package?.type == 'event'
+                            ? "Category"
+                            : "Type",
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                      Text(
+                        controller.package?.categoryName ?? '-',
+                        style: TextStyle(
+                          fontSize: 14, // Slightly bigger than label
+                          color: Colors.black,
+                        ),
                       ),
                     ],
                   ),
@@ -109,7 +124,7 @@ class BookingView extends GetView<BookingController> {
             const SizedBox(height: 16),
             const Divider(), // Separator
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 30),
             _buildSectionTitle("Customer Information"),
             const SizedBox(height: 16),
             _buildTextField("Customer Name", controller.nameController),
@@ -131,7 +146,11 @@ class BookingView extends GetView<BookingController> {
             _buildDropdownGender(),
 
             const SizedBox(height: 30),
-            _buildSectionTitle("Book Information"),
+            _buildSectionTitle(
+              controller.package?.type == 'event'
+                  ? "Reservation Information"
+                  : "Book Information",
+            ),
             const SizedBox(height: 16),
             _buildTextField(
               "Pax",
@@ -152,62 +171,16 @@ class BookingView extends GetView<BookingController> {
                 );
               },
             ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () => controller.selectDate(context),
-              child: AbsorbPointer(
+            if (controller.package?.type == 'event')
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
                 child: _buildTextField(
-                  "Date",
-                  controller.dateController,
-                  suffixIcon: Icons.calendar_today,
+                  "Special Note",
+                  controller.noteController,
+                  maxLines: 4,
+                  hint: "Input your note transaction",
                 ),
               ),
-            ),
-
-            const SizedBox(height: 16),
-            Obx(
-              () => CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text(
-                  "Include Pickup Location?",
-                  style: TextStyle(fontSize: 14),
-                ),
-                value: controller.includePickup.value,
-                onChanged: (val) =>
-                    controller.includePickup.value = val ?? false,
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: AppTheme.primaryColor,
-              ),
-            ),
-
-            Obx(() {
-              if (controller.includePickup.value) {
-                return Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      "Pick up location",
-                      controller.pickupLocationController,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      "Hotel/Villa/Guest House Name",
-                      controller.hotelNameController,
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }),
-
-            const SizedBox(height: 16),
-            _buildTextField(
-              "Special Note",
-              controller.noteController,
-              maxLines: 3,
-              hint: "Input your note transaction",
-            ),
 
             const SizedBox(height: 40),
             const Divider(),
@@ -277,27 +250,38 @@ class BookingView extends GetView<BookingController> {
     );
   }
 
-  Widget _buildReadOnlyField(String label, String value) {
+  Widget _buildReadOnlyTextField(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
           ),
           child: Text(
             value,
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
           ),
         ),
       ],
     );
   }
+
+  Widget _buildReadOnlyField(String label, String value) =>
+      _buildReadOnlyTextField(label, value);
 
   Widget _buildTextField(
     String label,
