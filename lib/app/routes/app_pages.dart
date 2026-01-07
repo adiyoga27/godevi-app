@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/booking/views/booking_view.dart';
+import 'package:godevi_app/app/modules/booking/bindings/booking_binding.dart';
 import 'package:godevi_app/app/modules/detail/bindings/detail_binding.dart';
 import 'package:godevi_app/app/modules/detail/views/detail_view.dart';
 import 'package:godevi_app/app/modules/home/bindings/home_binding.dart';
@@ -19,6 +20,10 @@ import 'package:godevi_app/app/modules/about/views/about_view.dart';
 import 'package:godevi_app/app/modules/about/bindings/about_binding.dart';
 import 'package:godevi_app/app/modules/change_password/views/change_password_view.dart';
 import 'package:godevi_app/app/modules/change_password/bindings/change_password_binding.dart';
+import 'package:godevi_app/app/modules/village_list/views/village_list_view.dart';
+import 'package:godevi_app/app/modules/village_list/bindings/village_list_binding.dart';
+import 'package:godevi_app/app/modules/village_detail/views/village_detail_view.dart';
+import 'package:godevi_app/app/modules/village_detail/bindings/village_detail_binding.dart';
 
 part 'app_routes.dart';
 
@@ -43,7 +48,11 @@ class AppPages {
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
-    GetPage(name: _Paths.BOOKING, page: () => const BookingView()),
+    GetPage(
+      name: _Paths.BOOKING,
+      page: () => const BookingView(),
+      binding: BookingBinding(),
+    ),
     GetPage(name: _Paths.ARTICLE_DETAIL, page: () => const ArticleDetailView()),
     GetPage(
       name: _Paths.CATEGORY_LIST,
@@ -79,6 +88,16 @@ class AppPages {
       name: _Paths.CHANGE_PASSWORD,
       page: () => const ChangePasswordView(),
       binding: ChangePasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.VILLAGE_LIST,
+      page: () => const VillageListView(),
+      binding: VillageListBinding(),
+    ),
+    GetPage(
+      name: _Paths.VILLAGE_DETAIL,
+      page: () => const VillageDetailView(),
+      binding: VillageDetailBinding(),
     ),
   ];
 }

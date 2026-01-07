@@ -13,6 +13,8 @@ abstract class Routes {
   static const FAQ = _Paths.FAQ;
   static const ABOUT = _Paths.ABOUT;
   static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
+  static const VILLAGE_LIST = _Paths.VILLAGE_LIST;
+  static const VILLAGE_DETAIL = _Paths.VILLAGE_DETAIL;
 }
 
 abstract class _Paths {
@@ -28,4 +30,6 @@ abstract class _Paths {
   static const FAQ = '/faq';
   static const ABOUT = '/about';
   static const CHANGE_PASSWORD = '/change-password';
+  static const VILLAGE_LIST = '/village-list';
+  static const VILLAGE_DETAIL = '/village-detail';
 }

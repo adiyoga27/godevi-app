@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/home/controllers/home_controller.dart';
+import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/article_card.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/category_selector.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/home_header.dart';
@@ -55,8 +56,16 @@ class HomeView extends GetView<HomeController> {
                       scrollDirection: Axis.horizontal,
                       itemCount: controller.popularVillages.length,
                       itemBuilder: (context, index) {
-                        return VillageCard(
-                          village: controller.popularVillages[index],
+                        return GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.VILLAGE_DETAIL,
+                              arguments: controller.popularVillages[index],
+                            );
+                          },
+                          child: VillageCard(
+                            village: controller.popularVillages[index],
+                          ),
                         );
                       },
                     ),

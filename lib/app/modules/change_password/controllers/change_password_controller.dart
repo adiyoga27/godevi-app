@@ -40,15 +40,21 @@ class ChangePasswordController extends GetxController {
             ? responseBody['message']
             : 'Success';
 
+        print('Parsed Status: $status (${status.runtimeType})');
+
         if (status == true) {
+          print('Entering success block');
           Get.snackbar(
             'Success',
             message ?? 'Password changed successfully',
             backgroundColor: Colors.green,
             colorText: Colors.white,
           );
+
+          await Future.delayed(const Duration(seconds: 2));
           Get.back();
         } else {
+          print('Entering error block');
           Get.snackbar(
             'Error',
             message ?? 'Failed to change password',

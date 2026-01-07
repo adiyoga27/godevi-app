@@ -50,92 +50,198 @@ class DetailView extends GetView<DetailController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Name and Rating
+                  Text(
+                    package.name ?? '',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          package.name ?? '',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      const Icon(Icons.star, color: Colors.amber, size: 18),
+                      const SizedBox(width: 4),
+                      Text(
+                        (package.review != null)
+                            ? package.review.toString()
+                            : '0.0',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            currencyFormatter.format(package.price ?? 0),
-                            style: const TextStyle(
-                              color: AppTheme.primaryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Text(
-                            "/pax",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                      const SizedBox(width: 4),
+                      const Text(
+                        '(0 Reviews)',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    "Description",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                  Html(data: package.description ?? ''),
 
+                  // Description
+                  Html(
+                    data: package.description ?? '',
+                    style: {
+                      "body": Style(
+                        margin: Margins.all(0),
+                        padding: HtmlPaddings.all(0),
+                        color: Colors.grey[800],
+                        lineHeight: LineHeight(1.5),
+                      ),
+                    },
+                  ),
                   const SizedBox(height: 20),
 
-                  // Gallery Section (Placeholder as list of images isn't explicitly in simplified model yet)
-                  const Text(
-                    "Gallery",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 80,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5, // Mock
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: 80,
-                          margin: const EdgeInsets.only(right: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey[300],
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                'https://via.placeholder.com/80',
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
+                  // Itinerary
+                  if (package.itenaries != null) ...[
+                    const Text(
+                      "Itinerary",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Html(
+                      data: package.itenaries,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                        "li": Style(margin: Margins.only(bottom: 8)),
                       },
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                  ],
 
-                  const SizedBox(height: 20),
-
-                  // Location / Map components (Placeholder)
-                  const Text(
-                    "Location",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(16),
+                  // Include
+                  if (package.inclusion != null) ...[
+                    const Text(
+                      "Include",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    child: const Center(
-                      child: Icon(Icons.map, color: Colors.grey, size: 40),
+                    Html(
+                      data: package.inclusion,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // Terms
+                  if (package.term != null) ...[
+                    const Text(
+                      "Terms",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Html(
+                      data: package.term,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                  ],
+
+                  // Some Information Box
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF9F9FF),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Some Information",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0D0846),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildInfoItem(
+                          icon: Icons.category,
+                          label: "Category :",
+                          value: package.categoryName ?? '-',
+                          isPrice: false,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoItem(
+                          icon: Icons.access_time,
+                          label: "Durasi :",
+                          value: _stripHtml(package.duration),
+                          isPrice: false,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoItem(
+                          icon: Icons.location_on_outlined,
+                          label: "Lokasi :",
+                          value: package.categoryName ?? '-',
+                          isPrice: false,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoItem(
+                          icon: Icons.person_outline,
+                          label: "Per Person :",
+                          isPrice: true,
+                          valueWidget:
+                              (package.disc != null && package.disc! > 0)
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      currencyFormatter.format(
+                                        package.price ?? 0,
+                                      ),
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        decoration: TextDecoration.lineThrough,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      currencyFormatter.format(package.disc),
+                                      style: const TextStyle(
+                                        color: AppTheme.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  currencyFormatter.format(package.price ?? 0),
+                                  style: const TextStyle(
+                                    color: AppTheme.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -175,5 +281,74 @@ class DetailView extends GetView<DetailController> {
         ),
       ),
     );
+  }
+
+  Widget _buildInfoItem({
+    required IconData icon,
+    required String label,
+    String? value,
+    Widget? valueWidget,
+    required bool isPrice,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Icon(icon, size: 20, color: Colors.blue[300]),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0D0846),
+                ),
+              ),
+              const SizedBox(height: 4),
+              if (valueWidget != null)
+                valueWidget
+              else if (isPrice)
+                Text(
+                  value ?? '',
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                )
+              else
+                Text(
+                  value ?? '',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _stripHtml(String? htmlString) {
+    if (htmlString == null) return '-';
+    // Remove HTML tags
+    final document = RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
+    var text = htmlString.replaceAll(document, '');
+    // Remove explicit &nbsp; entities if any
+    text = text.replaceAll('&nbsp;', ' ');
+    return text.trim();
   }
 }

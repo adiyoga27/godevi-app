@@ -9,7 +9,9 @@ class DetailController extends GetxController {
 
   void onBookNow() {
     if (_authService.isLoggedIn.value) {
-      Get.toNamed(Routes.BOOKING, arguments: package);
+      if (package != null) {
+        Get.toNamed(Routes.BOOKING, arguments: package);
+      }
     } else {
       Get.toNamed(Routes.LOGIN);
     }

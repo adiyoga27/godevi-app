@@ -52,7 +52,10 @@ class ApiProvider extends GetConnect {
 
   // Menus
   // Menus
-  Future<Response> getVillages() => get('/v2/villages');
+  Future<Response> getVillages({int page = 1}) =>
+      get('/v2/villages', query: {'page': '$page'});
+  Future<Response> getVillageTours(String slug) =>
+      get('/v2/villages/tour/$slug');
   Future<Response> getArticles() => get('/v2/articles');
   Future<Response> getTours() => get('/v2/tours');
   Future<Response> getEvents() => get('/v2/events');
