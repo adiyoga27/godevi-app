@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:intl/intl.dart';
 
+import 'package:godevi_app/app/data/services/auth_service.dart';
+
 class BookingController extends GetxController {
   final PackageModel? package = Get.arguments as PackageModel?;
+  final AuthService _authService = Get.find<AuthService>();
 
   // Customer Info
   final nameController = TextEditingController();
@@ -29,6 +32,16 @@ class BookingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    // Pre-fill user data
+    if (_authService.isLoggedIn.value && _authService.user.value != null) {
+      final user = _authService.user.value!;
+      nameController.text = user.name ?? '';
+      emailController.text = user.email ?? '';
+      addressController.text = user.address ?? '';
+      phoneController.text = user.phone ?? '';
+    }
+
     if (package != null) {
       calculateTotal();
     }

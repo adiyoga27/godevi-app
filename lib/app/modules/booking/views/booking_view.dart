@@ -250,7 +250,7 @@ class BookingView extends GetView<BookingController> {
                   ),
                 ),
                 child: const Text(
-                  "BOOK NOW",
+                  "To Payment",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -275,14 +275,6 @@ class BookingView extends GetView<BookingController> {
         color: Color(0xFF0D0846),
       ),
     );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return _buildReadOnlyField(label, value);
-  }
-
-  Widget _buildSingleInfoRow(String label, String value) {
-    return _buildReadOnlyField(label, value);
   }
 
   Widget _buildReadOnlyField(String label, String value) {
