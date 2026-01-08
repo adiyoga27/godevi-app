@@ -121,4 +121,29 @@ class AuthController extends GetxController {
       if (response.statusCode == 200 && response.body['status'] == true) {
         final token = response.body['data']['token'];
         _authService.saveToken(token);
-        debugLogs.add('[API] Login success, na
+        debugLogs.add('[API] Login success, navigating home...');
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        _showDebugError(
+          'API Error',
+          'Status: ${response.statusCode}\nMessage: ${response.body['message'] ?? 'Unknown error'}',
+        );
+      }
+    } catch (e, stackTrace) {
+      _showDebugError(
+        'API Error',
+        '$e\n\nStack: ${stackTrace.toString().split('\n').take(5).join('\n')}',
+      );
+    }
+  }
+
+  // Get all debug logs as formatted string
+  String getDebugLogsText() {
+    return debugLogs.join('\n');
+  }
+
+  // Clear debug logs
+  void clearDebugLogs() {
+    debugLogs.clear();
+  }
+}
