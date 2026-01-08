@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/notification_model.dart';
@@ -82,27 +81,15 @@ class NotificationView extends GetView<NotificationController> {
           vertical: 12,
         ),
         tileColor: isRead ? Colors.white : Colors.blue.withOpacity(0.05),
-        leading: notif.image != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: notif.image!,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) =>
-                      Container(color: Colors.grey[200], width: 50, height: 50),
-                ),
-              )
-            : Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.teal.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.notifications, color: Colors.teal),
-              ),
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.teal.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.notifications, color: Colors.teal),
+        ),
         title: Text(
           notif.title ?? 'No Title',
           style: TextStyle(
@@ -115,7 +102,7 @@ class NotificationView extends GetView<NotificationController> {
           children: [
             const SizedBox(height: 4),
             Text(
-              notif.body ?? '',
+              notif.subtitle ?? '',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Colors.grey[600]),

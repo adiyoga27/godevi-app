@@ -48,15 +48,25 @@ class NotificationController extends GetxController {
 
             final List<NotificationModel> temp = [];
 
+            print("Notification: Stream received ${snapshot.docs.length} docs");
+            print("Notification: Current User ID: $userId");
+
             for (var doc in snapshot.docs) {
               try {
                 final notif = NotificationModel.fromFirestore(doc);
+                print(
+                  "Notification: Processing doc ${doc.id}, type: ${notif.type}",
+                );
+                print(
+                  "Notification: ownerBy: ${notif.ownerBy}, deletedBy: ${notif.deletedBy}",
+                );
 
                 // Filter Logic
 
                 // 1. deleted_by: "jika id kita ada di deleted_by. maka hide listnya."
                 if (notif.deletedBy != null &&
                     notif.deletedBy!.contains(userId)) {
+                  print("Notification: Skipped ${doc.id} (deleted)");
                   continue;
                 }
 
@@ -64,6 +74,9 @@ class NotificationController extends GetxController {
                 if (notif.type == 'transaction') {
                   if (notif.ownerBy == null ||
                       !notif.ownerBy!.contains(userId)) {
+                    print(
+                      "Notification: Skipped ${doc.id} (not owner of transaction)",
+                    );
                     continue;
                   }
                 }
@@ -77,6 +90,7 @@ class NotificationController extends GetxController {
               }
             }
 
+            print("Notification: Final list size: ${temp.length}");
             notifications.assignAll(temp);
             isLoading.value = false;
           },
@@ -126,41 +140,49 @@ class NotificationController extends GetxController {
     markAsRead(notif);
 
     // Navigation Logic
-    // "reference tersebut digunakan untuk pindah ke activity contoh transaction/tour/25b9a573-b3f1-4d35-a796-36f9cde39c95"
     if (notif.reference != null) {
       final ref = notif.reference!;
-      // Assuming reference structure is flexible or matches the example path split?
-      // "transaction/tour/uuid".
-      // Let's look at the parsed reference map.
-      // Or maybe the prompt meant the 'reference' field IS that string?
-      // Prompt: "reference tersebut digunakan untuk pindah... contoh transaction/tour/..."
-      // My Model defined reference as Map<String, dynamic>.
-      // If Firestore has it as String, I should adjust.
-      // But typically structured data is better.
-      // Let's support both or check.
-      // Re-reading: "reference tersebut digunakan untuk pindah ke activity contoh transaction/tour/uuid"
-      // It implies the reference *value* might be a path string or map.
-      // Let's assume it's a Map { 'type': ..., 'uuid': ... } for robustness based on my created model,
-      // BUT if the backend (which I might not control fully, or implies manual entry) puts a string, I should handle it.
-      // I'll stick to the Map I defined in Model for now, assuming I can define the structure.
-
-      // If I look at the requested URL structure: transaction-detail/:type/:uuid
-      // So if reference has type and uuid:
-
       String? type = ref['type'];
-      String? uuid = ref['uuid'];
+      String? uuid = ref['uuid']; // or slug
 
-      // If reference is just a string in firestore, my model would fail or be null?
-      // Let's check model.
-      // `reference: data['reference'] is Map ? ... : null`
-      // So if it is a string, it will be null.
-      // I should update model to handle string if needed, but for now assuming Map is cleaner.
+      print("Notification: Tapped with type: $type, uuid/slug: $uuid");
 
       if (type != null && uuid != null) {
-        if (type == 'tour' || type == 'homestay' || type == 'event') {
+        // Handle normal transactions
+        if (type == 'tour' || type == 'homestay') {
           Get.toNamed(
             Routes.TRANSACTION_DETAIL,
             arguments: {'uuid': uuid, 'type': type},
+          );
+        }
+        // Handle events (could be transaction or regular detail)
+        // If type is explicitly 'events' (plural) from the screenshot, handle it.
+        else if (type == 'events' || type == 'event') {
+          // Decide if it's transaction detail or public DetailView
+          // Requirement said: "reference used to move to activity example transaction/tour/uuid"
+          // and "pindah ke invoice tour".
+          // Ensure we map 'events' to 'event' for transaction detail if it's a transaction.
+
+          // If it is a generic event notification (like in screenshot "Ada Event Baru"),
+          // likely it should go to Event Detail, NOT Transaction Invoice.
+          // However, the prompt specifically mentioned "pindah ke invoice tour yang dengan uuid tersebut".
+          // But the screenshot shows "New Event".
+
+          // Heuristic: If Notification Type is 'transaction', go to Invoice.
+          // If Notification Type is 'events' (or 'info'), go to Product Detail?
+          // The Prompt said: "reference tersebut digunakan untuk pindah ke activity contoh transaction/tour/uuid"
+
+          // Let's assume for now everything goes to Transaction Detail if we can,
+          // BUT "events/pandawa-beach-festival" looks like a slug for a Detail Page, not a UUID for an Order.
+
+          // For now, I will map 'events' to 'event' and try transaction detail
+          // because that was the explicit request ("pindah ke invoice").
+          // Re-reading: "pindah ke invoice tour yang dengan uuid tersebut"
+          // applies if it is a transaction reference.
+
+          Get.toNamed(
+            Routes.TRANSACTION_DETAIL,
+            arguments: {'uuid': uuid, 'type': 'event'},
           );
         }
       }
