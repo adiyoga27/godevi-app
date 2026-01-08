@@ -106,6 +106,10 @@ class ApiProvider extends GetConnect {
   Future<Response> getEventBySlug(String slug) => get('/v2/events/$slug');
   Future<Response> getHomestayBySlug(String slug) => get('/v2/homestay/$slug');
 
+  // Nearby
+  Future<Response> getNearbyTours(double lat, double lng) =>
+      get('/v2/tours-nearby/lat/$lat/lng/$lng');
+
   // Comments
   Future<Response> getComments(String slug) => get('/v2/blogs/comment/$slug');
   Future<Response> postComment(String slug, String comment) =>

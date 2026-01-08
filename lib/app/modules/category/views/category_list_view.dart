@@ -26,6 +26,14 @@ class CategoryListView extends GetView<CategoryListController> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
+        actions: [
+          if (controller.categoryType == 'tour')
+            IconButton(
+              onPressed: () => controller.fetchNearbyTours(),
+              icon: const Icon(Icons.near_me, color: Colors.blue),
+              tooltip: "Nearby Tours",
+            ),
+        ],
       ),
       backgroundColor: AppTheme.backgroundColor,
       body: Obx(() {

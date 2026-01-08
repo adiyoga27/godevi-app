@@ -4,6 +4,8 @@ import 'package:godevi_app/app/data/models/event_model.dart';
 import 'package:godevi_app/app/data/models/homestay_model.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CategoryListController extends GetxController {
   final ApiProvider apiProvider = Get.find<ApiProvider>();
@@ -71,6 +73,88 @@ class CategoryListController extends GetxController {
       }
     } catch (e) {
       print('Error fetching category data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchNearbyTours() async {
+    isLoading.value = true;
+    try {
+      // 1. Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Get.snackbar('Permission Denied', 'Location permission is required.');
+          isLoading.value = false;
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        Get.snackbar(
+          'Permission Denied',
+          'Location permissions are permanently denied, we cannot request permissions.',
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // 2. Get Position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Get Address Name
+      String locationName = "Current Location";
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          // Format: Bali, Gianyar
+          List<String> parts = [];
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.isNotEmpty) {
+            parts.add(place.administrativeArea!);
+          }
+          if (place.subAdministrativeArea != null &&
+              place.subAdministrativeArea!.isNotEmpty) {
+            parts.add(place.subAdministrativeArea!);
+          } else if (place.locality != null && place.locality!.isNotEmpty) {
+            parts.add(place.locality!);
+          }
+
+          if (parts.isNotEmpty) {
+            locationName = parts.join(", ");
+          }
+        }
+      } catch (e) {
+        print("Error getting placemark: $e");
+      }
+
+      Get.snackbar("Nearby Tours", "Showing tours in $locationName");
+
+      // 3. Call API
+      Response response = await apiProvider.getNearbyTours(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (!response.status.hasError) {
+        items.assignAll(
+          (response.body['data'] as List)
+              .map((e) => PackageModel.fromJson(e))
+              .toList(),
+        );
+      } else {
+        Get.snackbar("Error", "Failed to fetch nearby tours");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
     } finally {
       isLoading.value = false;
     }
