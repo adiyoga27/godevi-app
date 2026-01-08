@@ -6,6 +6,7 @@ class ArticleModel {
   String? postAuthor;
   String? slug;
   String? createdAt;
+  List<int>? likedBy;
 
   ArticleModel({
     this.id,
@@ -15,6 +16,7 @@ class ArticleModel {
     this.postAuthor,
     this.slug,
     this.createdAt,
+    this.likedBy,
   });
 
   ArticleModel.fromJson(Map<String, dynamic> json) {
@@ -25,5 +27,8 @@ class ArticleModel {
     postAuthor = json['post_author'];
     slug = json['slug'];
     createdAt = json['created_at'];
+    if (json['liked_by'] != null) {
+      likedBy = List<int>.from(json['liked_by']);
+    }
   }
 }

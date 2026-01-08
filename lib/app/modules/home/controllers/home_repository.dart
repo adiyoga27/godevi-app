@@ -44,4 +44,11 @@ class HomeRepository {
     final data = response.body['data'] as List;
     return data.map((e) => ArticleModel.fromJson(e)).toList();
   }
+
+  Future<List<ArticleModel>> getPopularArticles() async {
+    final response = await apiProvider.getPopularArticles();
+    if (response.status.hasError) return [];
+    final data = response.body['data'] as List;
+    return data.map((e) => ArticleModel.fromJson(e)).toList();
+  }
 }

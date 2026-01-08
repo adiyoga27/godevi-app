@@ -51,12 +51,12 @@ class ApiProvider extends GetConnect {
   Future<Response> getBestTours() => get('/v2/best-tours');
 
   // Menus
-  // Menus
   Future<Response> getVillages({int page = 1}) =>
       get('/v2/villages', query: {'page': '$page'});
   Future<Response> getVillageTours(String slug) =>
       get('/v2/villages/tour/$slug');
   Future<Response> getArticles() => get('/v2/articles');
+  Future<Response> getPopularArticles() => get('/v2/articles-popular');
   Future<Response> getTours() => get('/v2/tours');
   Future<Response> getEvents() => get('/v2/events');
   Future<Response> getHomestays() => get('/v2/homestay');
@@ -68,6 +68,8 @@ class ApiProvider extends GetConnect {
       get('/transaction/paid/$email');
   Future<Response> getTransactionDetail(String type, String uuid) =>
       get('/transaction-detail/$type/$uuid');
+  Future<Response> likeArticle(String slug) =>
+      post('/v2/articles/like/$slug', {});
   Future<Response> getCancelTransactions(String email) =>
       get('/transaction/cancel/$email');
   Future<Response> checkoutEvent(Map<String, dynamic> data) =>
@@ -102,4 +104,11 @@ class ApiProvider extends GetConnect {
   Future<Response> getTourBySlug(String slug) => get('/v2/tours/$slug');
   Future<Response> getEventBySlug(String slug) => get('/v2/events/$slug');
   Future<Response> getHomestayBySlug(String slug) => get('/v2/homestay/$slug');
+
+  // Comments
+  Future<Response> getComments(String slug) => get('/v2/blogs/comment/$slug');
+  Future<Response> postComment(String slug, String comment) =>
+      post('/v2/blogs/comment/$slug', FormData({'comment': comment}));
+  Future<Response> deleteComment(int id) =>
+      delete('/v2/blogs/comment/delete/$id');
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:godevi_app/app/data/models/article_model.dart';
 
 import 'package:get/get.dart';
+import 'package:godevi_app/app/modules/home/controllers/home_controller.dart';
+import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 
@@ -77,20 +79,26 @@ class ArticleCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        size: 12,
-                        color: Colors.grey,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 12,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
-                      ),
+                      _buildLikeButton(),
                     ],
                   ),
                 ],
@@ -98,6 +106,36 @@ class ArticleCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLikeButton() {
+    final controller = Get.find<HomeController>();
+    final authService = Get.find<AuthService>();
+    final userId = authService.user.value?.id;
+
+    final isLiked = article.likedBy?.contains(userId) ?? false;
+    final likeCount = article.likedBy?.length ?? 0;
+
+    return GestureDetector(
+      onTap: () => controller.toggleLike(article),
+      child: Row(
+        children: [
+          Icon(
+            isLiked ? Icons.favorite : Icons.favorite_border,
+            color: isLiked ? Colors.red : Colors.grey,
+            size: 16,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            "$likeCount",
+            style: TextStyle(
+              color: isLiked ? Colors.red : Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }

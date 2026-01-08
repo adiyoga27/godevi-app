@@ -86,6 +86,27 @@ class HomeView extends GetView<HomeController> {
                   ),
 
                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  // Popular Articles
+                  const SectionHeader(title: 'Popular Articles'),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 240,
+                    child: Obx(
+                      () => ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(right: 20),
+                        itemCount: controller.popularArticles.length,
+                        itemBuilder: (context, index) {
+                          return ArticleCard(
+                            article: controller.popularArticles[index],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
                   // Latest Articles
                   const SectionHeader(title: 'Latest Articles'),
                   const SizedBox(height: 10),
