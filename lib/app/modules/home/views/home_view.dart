@@ -108,7 +108,10 @@ class HomeView extends GetView<HomeController> {
 
                   const SizedBox(height: 20),
                   // Latest Articles
-                  const SectionHeader(title: 'Latest Articles'),
+                  SectionHeader(
+                    title: 'Latest Articles',
+                    onShowAll: controller.navigateToArticleList,
+                  ),
                   const SizedBox(height: 10),
                   SizedBox(
                     height: 240,

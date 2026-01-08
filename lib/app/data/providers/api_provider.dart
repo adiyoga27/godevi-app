@@ -55,7 +55,8 @@ class ApiProvider extends GetConnect {
       get('/v2/villages', query: {'page': '$page'});
   Future<Response> getVillageTours(String slug) =>
       get('/v2/villages/tour/$slug');
-  Future<Response> getArticles() => get('/v2/articles');
+  Future<Response> getArticles({String? keyword}) =>
+      get('/v2/articles', query: keyword != null ? {'keyword': keyword} : null);
   Future<Response> getPopularArticles() => get('/v2/articles-popular');
   Future<Response> getTours() => get('/v2/tours');
   Future<Response> getEvents() => get('/v2/events');

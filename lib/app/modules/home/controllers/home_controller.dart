@@ -69,6 +69,10 @@ class HomeController extends GetxController {
     }
   }
 
+  void navigateToArticleList() {
+    Get.toNamed('/article-list');
+  }
+
   void toggleLike(ArticleModel article) async {
     final authService = Get.find<AuthService>();
     if (!authService.isLoggedIn.value) {

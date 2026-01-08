@@ -27,82 +27,176 @@ class ArticleDetailView extends StatelessWidget {
     }
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 300,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: CachedNetworkImage(
-                imageUrl: article.postThumbnail ?? '',
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) =>
-                    Container(color: Colors.grey),
-              ),
-            ),
-            leading: IconButton(
-              icon: const CircleAvatar(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 320,
+                pinned: true,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.arrow_back, color: Colors.black),
-              ),
-              onPressed: () => Get.back(),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    article.postTitle ?? '',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                elevation: 0,
+                leading: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 10),
-                  _buildLikeSection(article),
-                  const SizedBox(height: 10),
-                  Row(
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                    onPressed: () => Get.back(),
+                  ),
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        size: 14,
-                        color: Colors.grey,
+                      CachedNetworkImage(
+                        imageUrl: article.postThumbnail ?? '',
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) =>
+                            Container(color: Colors.grey[200]),
                       ),
-                      const SizedBox(width: 5),
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      if (article.postAuthor != null) ...[
-                        const SizedBox(width: 15),
-                        const Icon(Icons.person, size: 14, color: Colors.grey),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Author: ${article.postAuthor}',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.3),
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.1),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  Html(data: article.postContent ?? ''),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  _buildCommentSection(Get.find<ArticleDetailController>()),
-                  const SizedBox(height: 50),
-                ],
+                ),
               ),
-            ),
+              SliverToBoxAdapter(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(32),
+                    ),
+                  ),
+                  transform: Matrix4.translationValues(0, -20, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Categories or Tags could go here
+                        Text(
+                          article.postTitle ?? '',
+                          style: const TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            height: 1.3,
+                            color: Colors.black87,
+                            fontFamily: 'Inter', // Assuming Inter or similar
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 16,
+                              backgroundColor: Colors.grey[200],
+                              child: const Icon(
+                                Icons.person,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  article.postAuthor != null &&
+                                          article.postAuthor!.length > 3
+                                      ? article.postAuthor!
+                                      : 'Godevi Contributor',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Text(
+                                  formattedDate,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: _buildLikeSection(article),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
+                        const Divider(height: 1),
+                        const SizedBox(height: 24),
+
+                        Html(
+                          data: article.postContent ?? '',
+                          style: {
+                            "body": Style(
+                              fontSize: FontSize(16),
+                              lineHeight: LineHeight(1.6),
+                              color: Colors.black87,
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                            ),
+                            "p": Style(margin: Margins.only(bottom: 16)),
+                            "img": Style(
+                              width: Width(100, Unit.percent),
+                              height: Height.auto(),
+                            ),
+                          },
+                        ),
+
+                        const SizedBox(height: 32),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: _buildCommentSection(
+                            Get.find<ArticleDetailController>(),
+                          ),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -112,7 +206,6 @@ class ArticleDetailView extends StatelessWidget {
   Widget _buildLikeSection(ArticleModel article) {
     return Obx(() {
       final homeController = Get.find<HomeController>();
-      // Find the latest version of this article from the controller's list
       final reactiveArticle = homeController.articles.firstWhere(
         (element) => element.id == article.id,
         orElse: () => article,
@@ -123,21 +216,28 @@ class ArticleDetailView extends StatelessWidget {
       final isLiked = reactiveArticle.likedBy?.contains(userId) ?? false;
       final likeCount = reactiveArticle.likedBy?.length ?? 0;
 
-      return Row(
-        children: [
-          IconButton(
-            onPressed: () => homeController.toggleLike(reactiveArticle),
-            icon: Icon(
+      return InkWell(
+        onTap: () => homeController.toggleLike(reactiveArticle),
+        borderRadius: BorderRadius.circular(20),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
               isLiked ? Icons.favorite : Icons.favorite_border,
               color: isLiked ? Colors.red : Colors.grey,
-              size: 28,
+              size: 20,
             ),
-          ),
-          Text(
-            "$likeCount Likes",
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-        ],
+            const SizedBox(width: 6),
+            Text(
+              "$likeCount",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isLiked ? Colors.red : Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
       );
     });
   }

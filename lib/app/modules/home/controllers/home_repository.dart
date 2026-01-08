@@ -38,8 +38,8 @@ class HomeRepository {
     return data.map((e) => HomestayModel.fromJson(e)).toList();
   }
 
-  Future<List<ArticleModel>> getArticles() async {
-    final response = await apiProvider.getArticles();
+  Future<List<ArticleModel>> getArticles({String? keyword}) async {
+    final response = await apiProvider.getArticles(keyword: keyword);
     if (response.status.hasError) return [];
     final data = response.body['data'] as List;
     return data.map((e) => ArticleModel.fromJson(e)).toList();

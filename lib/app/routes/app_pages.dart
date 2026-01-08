@@ -32,6 +32,8 @@ import 'package:godevi_app/app/modules/notification/views/notification_view.dart
 import 'package:godevi_app/app/modules/notification/bindings/notification_binding.dart';
 import 'package:godevi_app/app/modules/search/views/search_view.dart';
 import 'package:godevi_app/app/modules/search/bindings/search_binding.dart';
+import 'package:godevi_app/app/modules/article_list/views/article_list_view.dart';
+import 'package:godevi_app/app/modules/article_list/bindings/article_list_binding.dart';
 
 part 'app_routes.dart';
 
@@ -126,6 +128,11 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => const NotificationView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.ARTICLE_LIST,
+      page: () => const ArticleListView(),
+      binding: ArticleListBinding(),
     ),
   ];
 }
