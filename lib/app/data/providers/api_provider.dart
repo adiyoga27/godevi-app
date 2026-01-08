@@ -66,6 +66,8 @@ class ApiProvider extends GetConnect {
       get('/transaction/unpaid/$email');
   Future<Response> getPaidTransactions(String email) =>
       get('/transaction/paid/$email');
+  Future<Response> getTransactionDetail(String type, String uuid) =>
+      get('/transaction-detail/$type/$uuid');
   Future<Response> getCancelTransactions(String email) =>
       get('/transaction/cancel/$email');
   Future<Response> checkoutEvent(Map<String, dynamic> data) =>

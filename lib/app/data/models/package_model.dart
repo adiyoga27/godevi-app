@@ -11,10 +11,18 @@ class PackageModel {
   dynamic review;
   String? itenaries;
   String? inclusion;
+  String? exclusion;
   String? term;
   String? duration;
   String? preparation;
-  String? type; // 'tour' or 'event'
+  String? lat;
+  String? lng;
+  String? type; // 'tour', 'event', or 'homestay'
+
+  // Event-specific fields
+  String? location;
+  String? dateEvent;
+  String? interary; // Note: Events use 'interary', tours use 'itenaries'
 
   PackageModel({
     this.id,
@@ -29,10 +37,16 @@ class PackageModel {
     this.review,
     this.itenaries,
     this.inclusion,
+    this.exclusion,
     this.term,
     this.duration,
     this.preparation,
+    this.lat,
+    this.lng,
     this.type = 'tour',
+    this.location,
+    this.dateEvent,
+    this.interary,
   });
 
   PackageModel.fromJson(Map<String, dynamic> json) {
@@ -59,8 +73,16 @@ class PackageModel {
     review = json['review'];
     itenaries = json['itenaries'];
     inclusion = json['inclusion'];
+    exclusion = json['exclusion'];
     term = json['term'];
     duration = json['duration'];
     preparation = json['preparation'];
+    lat = json['lat'];
+    lng = json['lng'];
+
+    // Event-specific fields
+    location = json['location'];
+    dateEvent = json['date_event'];
+    interary = json['interary'];
   }
 }

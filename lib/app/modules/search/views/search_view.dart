@@ -5,6 +5,7 @@ import 'package:godevi_app/app/modules/search/controllers/search_controller.dart
     as app;
 import 'package:godevi_app/app/data/models/search_result_model.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
+import 'package:godevi_app/app/data/models/homestay_model.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 
@@ -204,6 +205,12 @@ class SearchView extends GetView<app.SearchController> {
   Future<void> _navigateToDetail(SearchResultModel item) async {
     print('\x1B[33m[Search] Navigating to: ${item.type}/${item.slug}\x1B[0m');
 
+    // Show loading indicator
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
     try {
       final apiProvider = Get.find<ApiProvider>();
       Response response;
@@ -219,23 +226,87 @@ class SearchView extends GetView<app.SearchController> {
           response = await apiProvider.getHomestayBySlug(item.slug);
           break;
         default:
+          Get.back(); // Close loading
           Get.snackbar('Error', 'Unknown item type: ${item.type}');
           return;
       }
 
-      if (response.statusCode == 200 && response.body['status'] == true) {
-        final data = response.body['data'];
-        final package = PackageModel.fromJson(data);
-        Get.toNamed(Routes.DETAIL, arguments: package);
+      Get.back(); // Close loading
+
+      print(
+        '\x1B[33m[Search] Detail Response Status: ${response.statusCode}\x1B[0m',
+      );
+      print('\x1B[33m[Search] Detail Response Body: ${response.body}\x1B[0m');
+
+      if (response.statusCode == 200 && response.body != null) {
+        // Detail API returns {data: {...}} directly, not {status: true, data: {...}}
+        final body = response.body;
+        Map<String, dynamic>? data;
+
+        // Handle both response formats
+        if (body is Map<String, dynamic>) {
+          if (body.containsKey('data') &&
+              body['data'] is Map<String, dynamic>) {
+            data = body['data'];
+          } else if (body.containsKey('id')) {
+            // Response is the data directly
+            data = body;
+          }
+        }
+
+        if (data != null) {
+          print('\x1B[32m[Search] Data received: $data\x1B[0m');
+
+          PackageModel package;
+
+          // Use appropriate model based on type
+          if (item.type.toLowerCase() == 'homestay') {
+            final homestay = HomestayModel.fromJson(data);
+            package = homestay.toPackageModel();
+            print(
+              '\x1B[32m[Search] Homestay parsed: ${homestay.name}, owner: ${homestay.ownerName}\x1B[0m',
+            );
+          } else {
+            package = PackageModel.fromJson(data);
+            package.type = item.type.toLowerCase();
+          }
+
+          print(
+            '\x1B[32m[Search] Package created: id=${package.id}, name=${package.name}, type=${package.type}\x1B[0m',
+          );
+
+          Get.toNamed(Routes.DETAIL, arguments: package);
+        } else {
+          print('\x1B[31m[Search] Could not parse data from response\x1B[0m');
+          Get.snackbar(
+            'Error',
+            'Could not parse response data',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
       } else {
+        final errorMsg = response.body['message'] ?? 'Failed to load details';
+        print('\x1B[31m[Search] API Error: $errorMsg\x1B[0m');
         Get.snackbar(
           'Error',
-          response.body['message'] ?? 'Failed to load details',
+          errorMsg,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Get.back(); // Close loading if open
       print('\x1B[31m[Search] Error loading detail: $e\x1B[0m');
-      Get.snackbar('Error', 'Failed to load details: $e');
+      print(
+        '\x1B[31m[Search] Stack: ${stackTrace.toString().split('\n').take(5).join('\n')}\x1B[0m',
+      );
+      Get.snackbar(
+        'Error',
+        'Failed to load details: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

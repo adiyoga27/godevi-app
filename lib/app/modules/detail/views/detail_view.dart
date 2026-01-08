@@ -97,7 +97,28 @@ class DetailView extends GetView<DetailController> {
                   const SizedBox(height: 20),
 
                   // Itinerary
-                  if (package.itenaries != null) ...[
+                  // Itinerary / Interary for Events
+                  if (package.type == 'event' && package.interary != null) ...[
+                    const Text(
+                      "Rundown",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Html(
+                      data: package.interary,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                        "li": Style(margin: Margins.only(bottom: 8)),
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ] else if (package.itenaries != null) ...[
                     const Text(
                       "Itinerary",
                       style: TextStyle(
@@ -130,6 +151,50 @@ class DetailView extends GetView<DetailController> {
                     ),
                     Html(
                       data: package.inclusion,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // Exclusion (Tours)
+                  if (package.exclusion != null) ...[
+                    const Text(
+                      "Exclude",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Html(
+                      data: package.exclusion,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                          fontSize: FontSize(14),
+                        ),
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // Preparation (Tours)
+                  if (package.preparation != null) ...[
+                    const Text(
+                      "Preparation",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Html(
+                      data: package.preparation,
                       style: {
                         "body": Style(
                           margin: Margins.all(0),
@@ -188,20 +253,43 @@ class DetailView extends GetView<DetailController> {
                           value: package.categoryName ?? '-',
                           isPrice: false,
                         ),
-                        const SizedBox(height: 16),
-                        _buildInfoItem(
-                          icon: Icons.access_time,
-                          label: "Durasi :",
-                          value: _stripHtml(package.duration),
-                          isPrice: false,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildInfoItem(
-                          icon: Icons.location_on_outlined,
-                          label: "Lokasi :",
-                          value: package.categoryName ?? '-',
-                          isPrice: false,
-                        ),
+                        if (package.duration != null &&
+                            package.duration!.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          _buildInfoItem(
+                            icon: Icons.access_time,
+                            label: "Duration :",
+                            value: _stripHtml(package.duration),
+                            isPrice: false,
+                          ),
+                        ],
+                        if (package.location != null) ...[
+                          const SizedBox(height: 16),
+                          _buildInfoItem(
+                            icon: Icons.location_on_outlined,
+                            label: "Location :",
+                            value: package.location,
+                            isPrice: false,
+                          ),
+                        ] else if (package.categoryName != null) ...[
+                          const SizedBox(height: 16),
+                          _buildInfoItem(
+                            icon: Icons.location_on_outlined,
+                            label: "Location :",
+                            value: package.categoryName,
+                            isPrice: false,
+                          ),
+                        ],
+                        if (package.dateEvent != null) ...[
+                          const SizedBox(height: 16),
+                          _buildInfoItem(
+                            icon: Icons.calendar_today,
+                            label: "Date :",
+                            value: package
+                                .dateEvent, // Assuming string format like '2021-12-17'
+                            isPrice: false,
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         _buildInfoItem(
                           icon: Icons.person_outline,

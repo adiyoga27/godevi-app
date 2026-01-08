@@ -18,6 +18,7 @@ abstract class Routes {
   static const RESERVATION = _Paths.RESERVATION;
   static const TRANSACTION_DETAIL = _Paths.TRANSACTION_DETAIL;
   static const SEARCH = _Paths.SEARCH;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
 }
 
 abstract class _Paths {
@@ -38,4 +39,5 @@ abstract class _Paths {
   static const RESERVATION = '/reservation';
   static const TRANSACTION_DETAIL = '/transaction-detail';
   static const SEARCH = '/search';
+  static const NOTIFICATION = '/notification';
 }

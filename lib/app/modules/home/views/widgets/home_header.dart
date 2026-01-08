@@ -58,7 +58,7 @@ class HomeHeader extends StatelessWidget {
                     Icons.notifications_none,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () => Get.toNamed(Routes.NOTIFICATION),
                 ),
               ),
             ],

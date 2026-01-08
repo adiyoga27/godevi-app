@@ -92,7 +92,14 @@ class ReservationController extends GetxController {
   }
 
   void navigateToDetail(TransactionModel transaction) {
-    Get.toNamed(Routes.TRANSACTION_DETAIL, arguments: transaction);
+    if (transaction.uuid == null || transaction.type == null) {
+      Get.snackbar("Error", "Invalid transaction data");
+      return;
+    }
+    Get.toNamed(
+      Routes.TRANSACTION_DETAIL,
+      arguments: {'uuid': transaction.uuid, 'type': transaction.type},
+    );
   }
 
   Future<void> proceedToPayment(TransactionModel transaction) async {

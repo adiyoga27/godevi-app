@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "372015866202",
+    "project_id": "godevi-77a73",
+    "storage_bucket": "godevi-77a73.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372015866202:android:83841a240d9e0ff3531363",
+        "android_client_info": {
+          "package_name": "com.codingaja.godevi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtoc3t_5inmv5wG3d4MUjFFD-ywOdfcXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,6 +3,7 @@ class TransactionModel {
   String? uuid;
   String? name; // Title (Event/Package Name)
   String? category; // e.g. "Virtual Tour", "Homestay"
+  String? type; // raw type: tour, event, homestay
   String? location;
   int? price;
   int? pax;
@@ -30,6 +31,7 @@ class TransactionModel {
     this.code,
     this.name,
     this.category,
+    this.type,
     this.location,
     this.price,
     this.pax,
@@ -51,6 +53,7 @@ class TransactionModel {
   });
 
   TransactionModel.fromJson(Map<String, dynamic> json, {String? type}) {
+    this.type = type;
     // ID isn't consistently available as integer 'id' in the new JSON, usually 'code' or 'uuid'
     if (json['id'] != null) {
       id = json['id'] is String ? int.tryParse(json['id']) : json['id'];

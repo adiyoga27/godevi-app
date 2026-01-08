@@ -45,6 +45,8 @@ dependencies:
   google_sign_in: ^6.1.0
   flutter_facebook_auth: ^7.1.5
   webview_flutter: ^4.13.1
+  firebase_core: ^4.3.0
+  cloud_firestore: ^6.1.1
 
 dev_dependencies:
   flutter_test:

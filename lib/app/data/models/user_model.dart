@@ -7,6 +7,7 @@ class UserModel {
   int? role;
   String? avatar;
   String? token;
+  int? id;
 
   UserModel({
     this.email,
@@ -17,9 +18,11 @@ class UserModel {
     this.role,
     this.avatar,
     this.token,
+    this.id,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     email = json['email'];
     name = json['name'];
     phone = json['phone'];
