@@ -14,14 +14,14 @@ class CategoryListController extends GetxController {
   final RxBool isLoading = true.obs;
 
   late String categoryType;
-  late String title;
+  final RxString title = "".obs;
 
   @override
   void onInit() {
     super.onInit();
     final args = Get.arguments as Map<String, dynamic>;
     categoryType = args['type'];
-    title = args['title'];
+    title.value = args['title'];
     fetchData();
   }
 
@@ -115,17 +115,32 @@ class CategoryListController extends GetxController {
         );
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
-          // Format: Bali, Gianyar
+          print("DEBUG PLACEMARK: $place"); // Debugging
+
           List<String> parts = [];
+
+          // Prioritize Administrative Area (Province)
           if (place.administrativeArea != null &&
               place.administrativeArea!.isNotEmpty) {
             parts.add(place.administrativeArea!);
           }
+
+          // Then SubAdministrative Area (Regency/City)
           if (place.subAdministrativeArea != null &&
               place.subAdministrativeArea!.isNotEmpty) {
             parts.add(place.subAdministrativeArea!);
-          } else if (place.locality != null && place.locality!.isNotEmpty) {
-            parts.add(place.locality!);
+          }
+
+          // Fallback: Locality (District) -> SubLocality -> Name
+          if (parts.isEmpty) {
+            if (place.locality != null && place.locality!.isNotEmpty) {
+              parts.add(place.locality!);
+            } else if (place.subLocality != null &&
+                place.subLocality!.isNotEmpty) {
+              parts.add(place.subLocality!);
+            } else if (place.name != null && place.name!.isNotEmpty) {
+              parts.add(place.name!);
+            }
           }
 
           if (parts.isNotEmpty) {
@@ -136,7 +151,8 @@ class CategoryListController extends GetxController {
         print("Error getting placemark: $e");
       }
 
-      Get.snackbar("Nearby Tours", "Showing tours in $locationName");
+      // Update Toolbar Title
+      title.value = "Tour $locationName";
 
       // 3. Call API
       Response response = await apiProvider.getNearbyTours(

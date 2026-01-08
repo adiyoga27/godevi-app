@@ -7,6 +7,8 @@ import 'package:godevi_app/app/data/models/article_model.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/modules/home/controllers/home_repository.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class HomeController extends GetxController {
   final HomeRepository repository = HomeRepository(Get.find<ApiProvider>());
@@ -18,11 +20,65 @@ class HomeController extends GetxController {
   final articles = <ArticleModel>[].obs;
 
   final isLoading = true.obs;
+  final RxString currentLocation = "Bali, Indonesia".obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchData();
+    fetchCurrentLocation();
+  }
+
+  Future<void> fetchCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
+      if (permission == LocationPermission.deniedForever) return;
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        List<String> parts = [];
+
+        // Prioritize Administrative Area (Province)
+        if (place.administrativeArea != null &&
+            place.administrativeArea!.isNotEmpty) {
+          parts.add(place.administrativeArea!);
+        }
+
+        // Then SubAdministrative Area (Regency/City)
+        if (place.subAdministrativeArea != null &&
+            place.subAdministrativeArea!.isNotEmpty) {
+          parts.add(place.subAdministrativeArea!);
+        }
+
+        // Fallback
+        if (parts.isEmpty) {
+          if (place.locality != null && place.locality!.isNotEmpty) {
+            parts.add(place.locality!);
+          } else if (place.name != null && place.name!.isNotEmpty) {
+            parts.add(place.name!);
+          }
+        }
+
+        if (parts.isNotEmpty) {
+          currentLocation.value = parts.join(", ");
+        }
+      }
+    } catch (e) {
+      print("Error fetching location: $e");
+    }
   }
 
   Future<void> fetchData() async {

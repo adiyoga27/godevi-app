@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/app/modules/notification/controllers/notification_controller.dart';
+import 'package:godevi_app/app/modules/home/controllers/home_controller.dart'
+    as godevi_app;
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({Key? key}) : super(key: key);
@@ -37,14 +39,18 @@ class HomeHeader extends StatelessWidget {
                         size: 16,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        'Bali, Indonesia',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      Obx(() {
+                        final homeController =
+                            Get.find<godevi_app.HomeController>();
+                        return Text(
+                          homeController.currentLocation.value,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ],

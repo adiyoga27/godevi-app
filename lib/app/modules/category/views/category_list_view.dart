@@ -19,9 +19,11 @@ class CategoryListView extends GetView<CategoryListController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          controller.title,
-          style: const TextStyle(color: Colors.black),
+        title: Obx(
+          () => Text(
+            controller.title.value,
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
