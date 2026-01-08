@@ -43,6 +43,7 @@ class UserModel {
     data['role'] = role;
     data['avatar'] = avatar;
     data['token'] = token;
+    data['id'] = id;
     return data;
   }
 }

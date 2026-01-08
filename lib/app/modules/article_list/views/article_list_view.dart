@@ -79,7 +79,7 @@ class ArticleListView extends GetView<ArticleListController> {
                     ),
                   ),
                   SizedBox(
-                    height: 240,
+                    height: 280,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -87,6 +87,7 @@ class ArticleListView extends GetView<ArticleListController> {
                       itemBuilder: (context, index) {
                         return ArticleCard(
                           article: controller.popularArticles[index],
+                          width: 280,
                         );
                       },
                     ),

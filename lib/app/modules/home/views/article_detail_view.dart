@@ -8,6 +8,7 @@ import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/modules/home/controllers/article_detail_controller.dart';
 import 'package:godevi_app/app/modules/article_list/controllers/article_list_controller.dart'
     as godevi_app;
+import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
 import 'package:intl/intl.dart';
 
 class ArticleDetailView extends StatelessWidget {
@@ -217,10 +218,6 @@ class ArticleDetailView extends StatelessWidget {
         reactiveArticle = alc.articles.firstWhereOrNull(
           (e) => e.id == article.id,
         );
-        // Check popular list if not found
-        reactiveArticle ??= alc.popularArticles.firstWhereOrNull(
-          (e) => e.id == article.id,
-        );
         if (reactiveArticle != null) activeController = alc;
       }
 
@@ -228,9 +225,6 @@ class ArticleDetailView extends StatelessWidget {
       if (reactiveArticle == null && Get.isRegistered<HomeController>()) {
         final homeController = Get.find<HomeController>();
         reactiveArticle = homeController.articles.firstWhereOrNull(
-          (element) => element.id == article.id,
-        );
-        reactiveArticle ??= homeController.popularArticles.firstWhereOrNull(
           (element) => element.id == article.id,
         );
         if (reactiveArticle != null) activeController = homeController;
@@ -388,7 +382,10 @@ class ArticleDetailView extends StatelessWidget {
         // Comment List
         Obx(() {
           if (controller.isLoadingComments.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const ListSkeleton(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+            );
           }
           if (controller.comments.isEmpty) {
             return const Center(

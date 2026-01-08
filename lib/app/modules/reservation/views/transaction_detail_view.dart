@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:godevi_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/transaction_model.dart';
@@ -14,12 +15,13 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
   Widget build(BuildContext context) {
     // Controller is injected via Binding
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: const Text(
           "Transaction Detail",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -48,113 +50,132 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Image & Status
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: transaction.image ?? '',
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => Container(
-                        height: 200,
-                        color: Colors.grey[200],
-                        child: const Icon(
-                          Icons.image,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(transaction.status),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        transaction.status ?? 'Unknown',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _buildHeaderImage(transaction),
               const SizedBox(height: 20),
 
-              // Title & Price
+              // Title & Price Logic
               Text(
                 transaction.name ?? 'No Name',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
                 currencyFormatter.format(transaction.total ?? 0),
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.teal,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.teal.shade700,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // Transaction Info
-              _buildSectionHeader("Transaction Info"),
-              _buildInfoRow("Type", transaction.category ?? '-'),
-              _buildInfoRow("Code", transaction.code ?? '-'),
-              _buildInfoRow("Date", _formatDate(transaction.date)),
-              _buildInfoRow("Location", transaction.location ?? '-'),
-              const Divider(height: 30),
-
-              // Customer Info
-              _buildSectionHeader("Customer Info"),
-              _buildInfoRow("Name", transaction.customerName ?? '-'),
-              _buildInfoRow("Email", transaction.customerEmail ?? '-'),
-              _buildInfoRow("Phone", transaction.customerPhone ?? '-'),
-              _buildInfoRow("Address", transaction.customerAddress ?? '-'),
-              const Divider(height: 30),
-
-              // Payment Info
-              _buildSectionHeader("Payment Info"),
-              _buildInfoRow(
-                "Package Price",
-                currencyFormatter.format(transaction.price ?? 0),
+              // Transaction Info Card
+              _buildCard(
+                title: "Transaction Info",
+                children: [
+                  _buildInfoRow(
+                    Icons.confirmation_number_outlined,
+                    "Code",
+                    transaction.code ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.category_outlined,
+                    "Type",
+                    transaction.category ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.calendar_today_outlined,
+                    "Date",
+                    _formatDate(transaction.date),
+                  ),
+                  _buildInfoRow(
+                    Icons.place_outlined,
+                    "Location",
+                    transaction.location ?? '-',
+                  ),
+                ],
               ),
-              _buildInfoRow(
-                "Total Payment",
-                currencyFormatter.format(transaction.total ?? 0),
+
+              // Customer Info Card
+              _buildCard(
+                title: "Customer Info",
+                children: [
+                  _buildInfoRow(
+                    Icons.person_outline,
+                    "Name",
+                    transaction.customerName ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.email_outlined,
+                    "Email",
+                    transaction.customerEmail ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.phone_outlined,
+                    "Phone",
+                    transaction.customerPhone ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.home_outlined,
+                    "Address",
+                    transaction.customerAddress ?? '-',
+                  ),
+                ],
               ),
-              _buildInfoRow("Payment Type", transaction.paymentType ?? '-'),
-              _buildInfoRow("Payment Date", transaction.paymentDate ?? '-'),
-              _buildInfoRow("Payment Status", transaction.status ?? '-'),
-              const Divider(height: 30),
+
+              // Payment Info Card
+              _buildCard(
+                title: "Payment Info",
+                children: [
+                  _buildInfoRow(
+                    Icons.people_outline,
+                    "Pax",
+                    "${transaction.pax ?? '-'} Person(s)",
+                  ),
+                  _buildInfoRow(
+                    Icons.monetization_on_outlined,
+                    "Package Price",
+                    currencyFormatter.format(transaction.price ?? 0),
+                  ),
+                  _buildInfoRow(
+                    Icons.payments_outlined,
+                    "Total Payment",
+                    currencyFormatter.format(transaction.total ?? 0),
+                  ),
+                  _buildInfoRow(
+                    Icons.credit_card_outlined,
+                    "Payment Type",
+                    transaction.paymentType ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.event_available_outlined,
+                    "Payment Date",
+                    transaction.paymentDate ?? '-',
+                  ),
+                  _buildInfoRow(
+                    Icons.info_outline,
+                    "Payment Status",
+                    transaction.status ?? '-',
+                  ),
+                ],
+              ),
 
               // Notes
               if (transaction.specialNote != null &&
-                  transaction.specialNote!.isNotEmpty) ...[
-                _buildSectionHeader("Details & Notes"),
-                Text(
-                  transaction.specialNote!,
-                  style: TextStyle(color: Colors.grey[800], height: 1.5),
+                  transaction.specialNote!.isNotEmpty)
+                _buildCard(
+                  title: "Details & Notes",
+                  children: [
+                    Text(
+                      transaction.specialNote!,
+                      style: TextStyle(color: Colors.grey[800], height: 1.5),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
 
-              // Spacing for bottom button
               const SizedBox(height: 80),
             ],
           ),
@@ -170,6 +191,147 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
     );
   }
 
+  Widget _buildHeaderImage(TransactionModel transaction) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: CachedNetworkImage(
+            imageUrl: transaction.image ?? '',
+            height: 220,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorWidget: (context, url, error) => Container(
+              height: 220,
+              color: Colors.grey[200],
+              child: const Icon(Icons.image, size: 50, color: Colors.grey),
+            ),
+          ),
+        ),
+        // Gradient Overlay
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 16,
+          right: 16,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: _getStatusColor(transaction.status).withOpacity(0.9),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: _getStatusColor(transaction.status).withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.info_outline, color: Colors.white, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  transaction.status ?? 'Unknown',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCard({required String title, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: Colors.blue.shade700),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBottomActions(
     BuildContext context,
     TransactionModel transaction,
@@ -178,25 +340,23 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
     bool showActions =
         transaction.status?.toLowerCase() == 'pending' ||
         transaction.status == null ||
-        transaction.status?.toLowerCase() ==
-            'alert' || // Assuming 'alert'/unpaid status
+        transaction.status?.toLowerCase() == 'alert' ||
         transaction.status?.toLowerCase() == 'unpaid';
 
     if (!showActions) return const SizedBox.shrink();
 
-    // Ideally we should use TransactionDetailController logic,
-    // but reusing ReservationController logic if available:
     final resController = Get.find<reservation.ReservationController>();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -4),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
@@ -206,11 +366,11 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
             child: OutlinedButton(
               onPressed: () => resController.cancelTransaction(transaction),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                foregroundColor: Colors.red.shade400,
+                side: BorderSide(color: Colors.red.shade200),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: const Text("Cancel Payment"),
@@ -223,53 +383,16 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                shadowColor: Colors.teal.withOpacity(0.4),
+                elevation: 8,
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text("To Payment"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+              child: const Text(
+                "To Payment",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),

@@ -27,13 +27,18 @@ class NotificationModel {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     // Handle reference parsing (it comes as string "type/uuid")
+    // Handle reference parsing (it comes as string "type/uuid" or "collection/slug")
     Map<String, dynamic>? parsedRef;
     if (data['reference'] is String) {
-      final parts = (data['reference'] as String).split('/');
+      final String refStr = data['reference'];
+      parsedRef = {'full': refStr};
+
+      final parts = refStr.split('/');
       if (parts.length >= 2) {
-        // Assuming format "type/uuid" or "collection/slug"
         // If "events/slug", type=events, uuid=slug
-        parsedRef = {'type': parts[0], 'uuid': parts[1]};
+        parsedRef['type'] = parts[0];
+        // Capture everything after the first slash as uuid/slug/path
+        parsedRef['uuid'] = parts.sublist(1).join('/');
       }
     } else if (data['reference'] is Map) {
       parsedRef = Map<String, dynamic>.from(data['reference']);
@@ -45,9 +50,13 @@ class NotificationModel {
       subtitle: data['subtitle'],
       type: data['type'],
       reference: parsedRef,
-      ownerBy: List<String>.from(data['owner_by'] ?? []),
-      deletedBy: List<String>.from(data['deleted_by'] ?? []),
-      readBy: List<String>.from(data['read_by'] ?? []),
+      ownerBy:
+          (data['owner_by'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      deletedBy:
+          (data['deleted_by'] as List?)?.map((e) => e.toString()).toList() ??
+          [],
+      readBy:
+          (data['read_by'] as List?)?.map((e) => e.toString()).toList() ?? [],
       createdAt: data['created_at'], // It is a Timestamp
     );
   }

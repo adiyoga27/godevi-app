@@ -63,6 +63,7 @@ class TransactionModel {
     code = json['code'];
     status = json['payment_status'] ?? json['status'];
     date = json['created_at'];
+    pax = json['pax'] is String ? int.tryParse(json['pax']) : json['pax'];
 
     // Customer Info
     customerName = json['customer_name'];

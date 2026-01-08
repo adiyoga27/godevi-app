@@ -38,27 +38,29 @@ class PackageCard extends StatelessWidget {
         child: InkWell(
           onTap: () => Get.toNamed('/detail', arguments: package),
           borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: package.defaultImg ?? '',
-                    height: 80,
-                    width: 80,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => Container(
-                      height: 80,
-                      width: 80,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.error),
-                    ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: package.defaultImg ?? '',
+                  height: 110,
+                  width: 110,
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => Container(
+                    height: 110,
+                    width: 110,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.error),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -72,29 +74,49 @@ class PackageCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        currencyFormatter.format(
-                          (package.disc != null && package.disc != 0)
-                              ? package.disc
-                              : package.price ?? 0,
-                        ),
-                        style: const TextStyle(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 14),
-                          const SizedBox(width: 4),
-                          const Text('4.5', style: TextStyle(fontSize: 12)),
+                          Text(
+                            currencyFormatter.format(
+                              (package.disc != null && package.disc != 0)
+                                  ? package.disc
+                                  : package.price ?? 0,
+                            ),
+                            style: const TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(() {
+                                double rating = 0.0;
+                                if (package.review != null) {
+                                  if (package.review is num) {
+                                    rating = (package.review as num).toDouble();
+                                  } else if (package.review is String) {
+                                    rating =
+                                        double.tryParse(package.review) ?? 0.0;
+                                  }
+                                }
+                                return rating.toStringAsFixed(1); // 4.5
+                              }(), style: const TextStyle(fontSize: 12)),
+                            ],
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

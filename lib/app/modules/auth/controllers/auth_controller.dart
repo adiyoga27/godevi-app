@@ -113,8 +113,26 @@ class AuthController extends GetxController {
         final data = response.body['data'];
         final token = data['token'];
 
-        // Create UserModel from response data and save
-        final userData = UserModel(email: email, name: name, token: token);
+        // Create UserModel from response data
+        // Check if data has a nested 'user' object or is the user object itself
+        Map<String, dynamic> userMap = data;
+        if (data['user'] != null && data['user'] is Map<String, dynamic>) {
+          userMap = data['user'];
+          // Ensure token is preserved if it was at the top level
+          userMap['token'] ??= token;
+        } else {
+          // Ensure token is present if flat structure
+          userMap['token'] ??= token;
+        }
+
+        final userData = UserModel.fromJson(userMap);
+
+        // Ensure critical fields are set from social login if missing in API
+        if (userData.email == null || userData.email!.isEmpty)
+          userData.email = email;
+        if (userData.name == null || userData.name!.isEmpty)
+          userData.name = name;
+
         _authService.login(
           userData,
         ); // This saves user AND sets isLoggedIn = true

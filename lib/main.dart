@@ -5,6 +5,7 @@ import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/firebase_options.dart';
+import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -13,6 +14,7 @@ void main() async {
   // Initialize Services
   await GetStorage.init();
   await Get.putAsync(() => AuthService().init());
+  Get.put(ApiProvider());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     GetMaterialApp(

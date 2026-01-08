@@ -7,6 +7,7 @@ import 'package:godevi_app/app/data/models/search_result_model.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:godevi_app/app/data/models/homestay_model.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
+import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 
 class SearchView extends GetView<app.SearchController> {
@@ -206,10 +207,7 @@ class SearchView extends GetView<app.SearchController> {
     print('\x1B[33m[Search] Navigating to: ${item.type}/${item.slug}\x1B[0m');
 
     // Show loading indicator
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
+    Get.dialog(const ListSkeleton(), barrierDismissible: false);
 
     try {
       final apiProvider = Get.find<ApiProvider>();

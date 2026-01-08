@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/reservation/controllers/transaction_detail_controller.dart';
+import 'package:godevi_app/app/modules/reservation/controllers/reservation_controller.dart';
 
 class TransactionDetailBinding extends Bindings {
   @override
@@ -7,5 +8,6 @@ class TransactionDetailBinding extends Bindings {
     Get.lazyPut<TransactionDetailController>(
       () => TransactionDetailController(),
     );
+    Get.lazyPut<ReservationController>(() => ReservationController());
   }
 }

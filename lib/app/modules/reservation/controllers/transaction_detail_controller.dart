@@ -13,6 +13,12 @@ class TransactionDetailController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     if (args != null && args is Map) {
+      final String? apiUrl = args['api_url'];
+      if (apiUrl != null) {
+        fetchTransactionDetailByUrl(apiUrl);
+        return;
+      }
+
       final String? uuid = args['uuid'];
       final String? type = args['type'];
       if (uuid != null && type != null) {
@@ -31,17 +37,41 @@ class TransactionDetailController extends GetxController {
     isLoading.value = true;
     try {
       final response = await _apiProvider.getTransactionDetail(type, uuid);
-      if (response.statusCode == 200) {
-        final data = response.body['data'] ?? response.body;
-        transaction.value = TransactionModel.fromJson(data, type: type);
-      } else {
-        Get.snackbar("Error", "Failed to detailed transaction");
-      }
+      _handleResponse(response, type);
     } catch (e) {
       print("Error fetching detail: $e");
       Get.snackbar("Error", "Something went wrong");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchTransactionDetailByUrl(String url) async {
+    isLoading.value = true;
+    try {
+      final response = await _apiProvider.get(url);
+      // We don't know type, try to infer or pass generic?
+      // TransactionModel.fromJson requires type.
+      // If url is like /transaction-detail/event/..., inference:
+      String type = 'tour'; // Default fallback
+      if (url.contains('/event/')) type = 'event';
+      if (url.contains('/homestay/')) type = 'homestay';
+
+      _handleResponse(response, type);
+    } catch (e) {
+      print("Error fetching detail by url: $e");
+      Get.snackbar("Error", "Something went wrong");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _handleResponse(Response response, String type) {
+    if (response.statusCode == 200) {
+      final data = response.body['data'] ?? response.body;
+      transaction.value = TransactionModel.fromJson(data, type: type);
+    } else {
+      Get.snackbar("Error", "Failed to detailed transaction");
     }
   }
 }

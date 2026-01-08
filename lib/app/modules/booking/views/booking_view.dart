@@ -186,16 +186,15 @@ class BookingView extends GetView<BookingController> {
                 );
               },
             ),
-            if (controller.package?.type == 'event')
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: _buildTextField(
-                  "Special Note",
-                  controller.noteController,
-                  maxLines: 4,
-                  hint: "Input your note transaction",
-                ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: _buildTextField(
+                "Special Note",
+                controller.noteController,
+                maxLines: 4,
+                hint: "Input your note transaction",
               ),
+            ),
 
             const SizedBox(height: 40),
             const Divider(),

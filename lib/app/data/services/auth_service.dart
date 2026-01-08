@@ -14,6 +14,7 @@ class AuthService extends GetxService {
     if (userData != null) {
       try {
         user.value = UserModel.fromJson(userData);
+
         isLoggedIn.value = true;
       } catch (e) {
         print('Error reading user data: $e');

@@ -5,6 +5,7 @@ import 'package:godevi_app/app/data/models/event_model.dart';
 import 'package:godevi_app/app/data/models/homestay_model.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:godevi_app/app/modules/category/controllers/category_list_controller.dart';
+import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/article_list_card.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/event_card.dart';
 import 'package:godevi_app/app/modules/home/views/widgets/homestay_card.dart';
@@ -29,7 +30,7 @@ class CategoryListView extends GetView<CategoryListController> {
       backgroundColor: AppTheme.backgroundColor,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const ListSkeleton();
         }
 
         if (controller.items.isEmpty) {

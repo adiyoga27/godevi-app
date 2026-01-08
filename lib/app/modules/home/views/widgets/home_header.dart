@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
+import 'package:godevi_app/app/modules/notification/controllers/notification_controller.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({Key? key}) : super(key: key);
@@ -53,13 +54,46 @@ class HomeHeader extends StatelessWidget {
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.notifications_none,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => Get.toNamed(Routes.NOTIFICATION),
-                ),
+                child: Obx(() {
+                  final unreadCount =
+                      Get.find<NotificationController>().unreadCount;
+                  return Stack(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.notifications_none,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => Get.toNamed(Routes.NOTIFICATION),
+                      ),
+                      if (unreadCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '$unreadCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
               ),
             ],
           ),

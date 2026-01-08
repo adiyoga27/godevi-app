@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/transaction_model.dart';
 import 'package:godevi_app/app/modules/reservation/controllers/reservation_controller.dart';
-import 'package:godevi_app/core/theme/app_theme.dart';
+
+import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
 import 'package:intl/intl.dart';
 
 class ReservationView extends GetView<ReservationController> {
@@ -28,7 +29,7 @@ class ReservationView extends GetView<ReservationController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const ListSkeleton();
               }
               if (controller.transactions.isEmpty) {
                 return const Center(child: Text("No transactions found"));

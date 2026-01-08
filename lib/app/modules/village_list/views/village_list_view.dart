@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/village_list/controllers/village_list_controller.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
+import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 
 class VillageListView extends GetView<VillageListController> {
@@ -24,7 +25,7 @@ class VillageListView extends GetView<VillageListController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const ListSkeleton();
         }
 
         if (controller.villages.isEmpty) {

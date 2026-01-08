@@ -3,25 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:godevi_app/app/data/models/slider_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class HomeSlider extends StatelessWidget {
+class HomeSlider extends StatefulWidget {
   final List<SliderModel> sliders;
 
   const HomeSlider({Key? key, required this.sliders}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    if (sliders.isEmpty) return const SizedBox.shrink();
+  State<HomeSlider> createState() => _HomeSliderState();
+}
 
-    return Column(
+class _HomeSliderState extends State<HomeSlider> {
+  int _current = 0;
+  final CarouselSliderController _controller = CarouselSliderController();
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.sliders.isEmpty) return const SizedBox.shrink();
+
+    return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
         CarouselSlider(
+          carouselController: _controller,
           options: CarouselOptions(
             height: 350.0,
             autoPlay: true,
             viewportFraction: 1.0,
             enlargeCenterPage: false,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _current = index;
+              });
+            },
           ),
-          items: sliders.map((slider) {
+          items: widget.sliders.map((slider) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -67,8 +82,8 @@ class HomeSlider extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(
-                          height: 30,
-                        ), // Space for bottom curve/overlap
+                          height: 40,
+                        ), // Increased space for indicators
                       ],
                     ),
                   ),
@@ -76,6 +91,33 @@ class HomeSlider extends StatelessWidget {
               },
             );
           }).toList(),
+        ),
+        Positioned(
+          bottom: 20,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.sliders.asMap().entries.map((entry) {
+              return GestureDetector(
+                onTap: () => _controller.animateToPage(entry.key),
+                child: Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 4.0,
+                  ),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.white)
+                            .withOpacity(_current == entry.key ? 0.9 : 0.4),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );

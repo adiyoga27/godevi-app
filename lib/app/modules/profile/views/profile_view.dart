@@ -100,28 +100,6 @@ class ProfileView extends GetView<ProfileController> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Profile
-        onTap: (index) {
-          if (index == 0) Get.offAllNamed(Routes.HOME);
-          if (index == 1) Get.offAllNamed(Routes.BOOKING); // Or check auth
-          // Index 2 is current
-        },
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(
-            label: 'Home',
-            icon: Icon(Icons.home_outlined),
-          ),
-          BottomNavigationBarItem(
-            label: 'Reservasi',
-            icon: Icon(Icons.shopping_bag_outlined),
-          ),
-          BottomNavigationBarItem(label: 'Profile', icon: Icon(Icons.person)),
-        ],
-      ),
     );
   }
 

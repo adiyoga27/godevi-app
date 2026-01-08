@@ -9,14 +9,13 @@ import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/modules/home/controllers/home_repository.dart';
 
 class HomeController extends GetxController {
-  final HomeRepository repository = HomeRepository(Get.put(ApiProvider()));
+  final HomeRepository repository = HomeRepository(Get.find<ApiProvider>());
 
   final sliders = <SliderModel>[].obs;
   final popularVillages = <VillageModel>[].obs;
   final bestPackages = <PackageModel>[].obs;
   final bestHomestays = <HomestayModel>[].obs;
   final articles = <ArticleModel>[].obs;
-  final popularArticles = <ArticleModel>[].obs;
 
   final isLoading = true.obs;
 
@@ -35,7 +34,6 @@ class HomeController extends GetxController {
         repository.getBestTours(),
         repository.getBestHomestays(),
         repository.getArticles(),
-        repository.getPopularArticles(),
       ]);
 
       sliders.assignAll(results[0] as List<SliderModel>);
@@ -43,29 +41,10 @@ class HomeController extends GetxController {
       bestPackages.assignAll(results[2] as List<PackageModel>);
       bestHomestays.assignAll(results[3] as List<HomestayModel>);
       articles.assignAll(results[4] as List<ArticleModel>);
-      popularArticles.assignAll(results[5] as List<ArticleModel>);
     } catch (e) {
       print("Error fetching home data: $e");
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  void navigateToProfile() {
-    final authService = Get.find<AuthService>();
-    if (authService.isLoggedIn.value) {
-      Get.toNamed('/profile');
-    } else {
-      Get.toNamed('/login');
-    }
-  }
-
-  void navigateToBooking() {
-    final authService = Get.find<AuthService>();
-    if (authService.isLoggedIn.value) {
-      Get.toNamed('/reservation');
-    } else {
-      Get.toNamed('/login');
     }
   }
 
@@ -99,17 +78,6 @@ class HomeController extends GetxController {
       updatedArticle.likedBy = newLikedBy;
       articles[index] = updatedArticle;
       articles.refresh();
-    }
-
-    // Update popular articles list locally
-    final popIndex = popularArticles.indexWhere(
-      (element) => element.id == article.id,
-    );
-    if (popIndex != -1) {
-      ArticleModel updatedArticle = article;
-      updatedArticle.likedBy = newLikedBy;
-      popularArticles[popIndex] = updatedArticle;
-      popularArticles.refresh();
     }
 
     // Call API

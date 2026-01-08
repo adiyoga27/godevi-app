@@ -7,6 +7,7 @@ import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/app/modules/reservation/views/payment_webview.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
+import 'package:godevi_app/app/modules/main/controllers/main_controller.dart';
 
 class BookingController extends GetxController {
   final PackageModel? package = Get.arguments as PackageModel?;
@@ -183,12 +184,26 @@ class BookingController extends GetxController {
         final String? linkPayment = responseData['link_payment'];
 
         if (linkPayment != null) {
-          // Reset stack to Reservation Menu, then open Payment.
-          Get.offAllNamed(Routes.RESERVATION);
+          // 1. Reset stack to Home (Main View)
+          await Get.offAllNamed(Routes.HOME);
+
+          // 2. Force initialization of MainController and set index to Reservation (1)
+          try {
+            final mainController = Get.find<MainController>();
+            mainController.currentIndex.value = 1;
+          } catch (e) {
+            print("Error initializing MainController: $e");
+          }
+
+          // 3. Open Payment Page
           Get.to(() => PaymentWebView(url: linkPayment));
         } else {
           Get.snackbar("Success", "Booking Success but no payment link found.");
-          Get.offAllNamed(Routes.RESERVATION);
+          await Get.offAllNamed(Routes.HOME);
+          try {
+            final mainController = Get.find<MainController>();
+            mainController.currentIndex.value = 1;
+          } catch (_) {}
         }
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Checkout Failed");

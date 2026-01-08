@@ -12,8 +12,10 @@ import 'package:intl/intl.dart';
 
 class ArticleCard extends StatelessWidget {
   final ArticleModel article;
+  final double? width;
 
-  const ArticleCard({Key? key, required this.article}) : super(key: key);
+  const ArticleCard({Key? key, required this.article, this.width})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +31,8 @@ class ArticleCard extends StatelessWidget {
     }
 
     return Container(
-      width: 250,
-      margin: const EdgeInsets.only(left: 20),
+      width: width ?? double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -78,6 +80,16 @@ class ArticleCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    (article.postContent ?? '').replaceAll(
+                      RegExp(r'<[^>]*>'),
+                      '',
+                    ), // Strip HTML tags
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -135,9 +147,6 @@ class ArticleCard extends StatelessWidget {
       if (reactiveArticle == null && Get.isRegistered<HomeController>()) {
         final hc = Get.find<HomeController>();
         reactiveArticle = hc.articles.firstWhereOrNull(
-          (e) => e.id == article.id,
-        );
-        reactiveArticle ??= hc.popularArticles.firstWhereOrNull(
           (e) => e.id == article.id,
         );
         if (reactiveArticle != null) activeController = hc;

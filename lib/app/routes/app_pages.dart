@@ -3,8 +3,8 @@ import 'package:godevi_app/app/modules/booking/views/booking_view.dart';
 import 'package:godevi_app/app/modules/booking/bindings/booking_binding.dart';
 import 'package:godevi_app/app/modules/detail/bindings/detail_binding.dart';
 import 'package:godevi_app/app/modules/detail/views/detail_view.dart';
-import 'package:godevi_app/app/modules/home/bindings/home_binding.dart';
-import 'package:godevi_app/app/modules/home/views/home_view.dart';
+import 'package:godevi_app/app/modules/main/bindings/main_binding.dart';
+import 'package:godevi_app/app/modules/main/views/main_view.dart';
 import 'package:godevi_app/app/modules/login/bindings/login_binding.dart';
 import 'package:godevi_app/app/modules/login/views/login_view.dart';
 import 'package:godevi_app/app/modules/home/views/article_detail_view.dart';
@@ -45,8 +45,8 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
+      page: () => const MainView(),
+      binding: MainBinding(),
     ),
     GetPage(
       name: _Paths.DETAIL,
