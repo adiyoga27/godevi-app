@@ -31,4 +31,25 @@ class ArticleModel {
       likedBy = List<int>.from(json['liked_by']);
     }
   }
+  ArticleModel copyWith({
+    int? id,
+    String? postTitle,
+    String? postContent,
+    String? postThumbnail,
+    String? postAuthor,
+    String? slug,
+    String? createdAt,
+    List<int>? likedBy,
+  }) {
+    return ArticleModel(
+      id: id ?? this.id,
+      postTitle: postTitle ?? this.postTitle,
+      postContent: postContent ?? this.postContent,
+      postThumbnail: postThumbnail ?? this.postThumbnail,
+      postAuthor: postAuthor ?? this.postAuthor,
+      slug: slug ?? this.slug,
+      createdAt: createdAt ?? this.createdAt,
+      likedBy: likedBy ?? this.likedBy,
+    );
+  }
 }

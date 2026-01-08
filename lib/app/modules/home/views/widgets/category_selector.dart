@@ -33,13 +33,14 @@ class CategorySelector extends StatelessWidget {
                 String label = cat['label'] as String;
                 if (label == 'Village') {
                   Get.toNamed(Routes.VILLAGE_LIST);
+                } else if (label == 'Article') {
+                  Get.toNamed(Routes.ARTICLE_LIST);
                 } else {
                   // Determine type based on label
                   String type = '';
                   if (label == 'Tour') type = 'tour';
                   if (label == 'Events') type = 'event';
                   if (label == 'Homestay') type = 'homestay';
-                  if (label == 'Article') type = 'article';
 
                   Get.toNamed(
                     Routes.CATEGORY_LIST,

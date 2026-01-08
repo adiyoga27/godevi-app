@@ -9,49 +9,148 @@ class ArticleListView extends GetView<ArticleListController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50], // Slightly off-white background
       appBar: AppBar(
-        title: const Text('Articles'),
+        title: const Text(
+          'Discover Articles',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
+        centerTitle: false,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search articles...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+      body: CustomScrollView(
+        slivers: [
+          // Search Bar
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search for articles...',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                  ),
+                  onSubmitted: (value) => controller.search(value),
+                ),
               ),
-              onSubmitted: (value) => controller.search(value),
             ),
           ),
-          Expanded(
+
+          // Popular Articles Section (Only if not searching)
+          SliverToBoxAdapter(
             child: Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+              if (controller.keyword.isNotEmpty ||
+                  controller.popularArticles.isEmpty) {
+                return const SizedBox.shrink();
               }
-
-              if (controller.articles.isEmpty) {
-                return const Center(child: Text('No articles found.'));
-              }
-
-              return ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: controller.articles.length,
-                itemBuilder: (context, index) {
-                  return ArticleCard(article: controller.articles[index]);
-                },
-                separatorBuilder: (_, __) => const SizedBox(height: 16),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Text(
+                      'Popular Now',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 240,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: controller.popularArticles.length,
+                      itemBuilder: (context, index) {
+                        return ArticleCard(
+                          article: controller.popularArticles[index],
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               );
             }),
           ),
+
+          // All Articles / Search Results Header
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              child: Obx(
+                () => Text(
+                  controller.keyword.isEmpty
+                      ? 'All Articles'
+                      : 'Search Results',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Article List
+          Obx(() {
+            if (controller.isLoading.value) {
+              return const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.articles.isEmpty) {
+              return const SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'No articles found.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              );
+            }
+
+            return SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: ArticleCard(article: controller.articles[index]),
+                );
+              }, childCount: controller.articles.length),
+            );
+          }),
+
+          const SliverPadding(padding: EdgeInsets.only(bottom: 20)),
         ],
       ),
     );
