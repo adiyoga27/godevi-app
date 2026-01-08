@@ -27,6 +27,8 @@ import 'package:godevi_app/app/modules/village_detail/bindings/village_detail_bi
 import 'package:godevi_app/app/modules/reservation/bindings/reservation_binding.dart';
 import 'package:godevi_app/app/modules/reservation/views/reservation_view.dart';
 import 'package:godevi_app/app/modules/reservation/views/transaction_detail_view.dart';
+import 'package:godevi_app/app/modules/search/views/search_view.dart';
+import 'package:godevi_app/app/modules/search/bindings/search_binding.dart';
 
 part 'app_routes.dart';
 
@@ -110,6 +112,11 @@ class AppPages {
     GetPage(
       name: _Paths.TRANSACTION_DETAIL,
       page: () => const TransactionDetailView(),
+    ),
+    GetPage(
+      name: _Paths.SEARCH,
+      page: () => const SearchView(),
+      binding: SearchBinding(),
     ),
   ];
 }

@@ -17,6 +17,7 @@ abstract class Routes {
   static const VILLAGE_DETAIL = _Paths.VILLAGE_DETAIL;
   static const RESERVATION = _Paths.RESERVATION;
   static const TRANSACTION_DETAIL = _Paths.TRANSACTION_DETAIL;
+  static const SEARCH = _Paths.SEARCH;
 }
 
 abstract class _Paths {
@@ -36,4 +37,5 @@ abstract class _Paths {
   static const VILLAGE_DETAIL = '/village-detail';
   static const RESERVATION = '/reservation';
   static const TRANSACTION_DETAIL = '/transaction-detail';
+  static const SEARCH = '/search';
 }

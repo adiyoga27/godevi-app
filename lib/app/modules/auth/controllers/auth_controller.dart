@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
+import 'package:godevi_app/app/data/models/user_model.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 
 class AuthController extends GetxController {
@@ -108,20 +109,20 @@ class AuthController extends GetxController {
       print('\x1B[33m[DEBUG] API Response: ${response.statusCode}\x1B[0m');
       print('\x1B[33m[DEBUG] Response Body: ${response.body}\x1B[0m');
 
-      // Show form data sent in yellow snackbar
-      Get.snackbar(
-        'Debug: Form Data Sent',
-        'provider: $provider\nprovider_id: $providerId\nname: $name\nemail: $email',
-        backgroundColor: Colors.amber.shade300,
-        colorText: Colors.black,
-        duration: const Duration(seconds: 3),
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.all(12),
-      );
       if (response.statusCode == 200 && response.body['status'] == true) {
-        final token = response.body['data']['token'];
-        _authService.saveToken(token);
-        debugLogs.add('[API] Login success, navigating home...');
+        final data = response.body['data'];
+        final token = data['token'];
+
+        // Create UserModel from response data and save
+        final userData = UserModel(email: email, name: name, token: token);
+        _authService.login(
+          userData,
+        ); // This saves user AND sets isLoggedIn = true
+
+        debugLogs.add('[API] Login success, user saved, navigating home...');
+        print(
+          '\x1B[32m[DEBUG] Auth saved successfully! isLoggedIn: ${_authService.isLoggedIn.value}\x1B[0m',
+        );
         Get.offAllNamed(Routes.HOME);
       } else {
         _showDebugError(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import 'package:godevi_app/app/routes/app_pages.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({Key? key}) : super(key: key);
@@ -62,19 +64,24 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Where are you going?',
-              prefixIcon: const Icon(Icons.search, color: Colors.grey),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
+          // Tappable search bar that navigates to SearchView
+          GestureDetector(
+            onTap: () => Get.toNamed(Routes.SEARCH),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 16,
+              child: Row(
+                children: [
+                  const Icon(Icons.search, color: Colors.grey),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Where are you going?',
+                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                  ),
+                ],
               ),
             ),
           ),

@@ -92,4 +92,12 @@ class ApiProvider extends GetConnect {
     // Use full URL to avoid baseUrl mismatch
     return post('/auth/login-sosmed', form);
   }
+
+  // Search
+  Future<Response> search(String keyword) => get('/v2/search/$keyword');
+
+  // Detail by slug
+  Future<Response> getTourBySlug(String slug) => get('/v2/tours/$slug');
+  Future<Response> getEventBySlug(String slug) => get('/v2/events/$slug');
+  Future<Response> getHomestayBySlug(String slug) => get('/v2/homestay/$slug');
 }
