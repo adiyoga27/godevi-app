@@ -15,10 +15,10 @@ class LoginController extends GetxController {
   Future<void> login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Get.snackbar(
-        "Error",
-        "Please fill all fields",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        "Warning",
+        "Username / password is empty",
+        backgroundColor: Colors.amber,
+        colorText: Colors.black,
       );
       return;
     }

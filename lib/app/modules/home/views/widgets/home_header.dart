@@ -103,28 +103,6 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Tappable search bar that navigates to SearchView
-          GestureDetector(
-            onTap: () => Get.toNamed(Routes.SEARCH),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Where are you going?',
-                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );

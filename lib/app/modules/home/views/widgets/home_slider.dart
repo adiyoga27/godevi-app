@@ -82,7 +82,7 @@ class _HomeSliderState extends State<HomeSlider> {
                           ),
                         ),
                         const SizedBox(
-                          height: 40,
+                          height: 70,
                         ), // Increased space for indicators
                       ],
                     ),
@@ -93,7 +93,7 @@ class _HomeSliderState extends State<HomeSlider> {
           }).toList(),
         ),
         Positioned(
-          bottom: 20,
+          bottom: 50,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: widget.sliders.asMap().entries.map((entry) {

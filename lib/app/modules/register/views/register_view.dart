@@ -3,8 +3,13 @@ import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/register/controllers/register_controller.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
 
+import 'package:godevi_app/app/modules/auth/controllers/auth_controller.dart';
+
 class RegisterView extends GetView<RegisterController> {
   const RegisterView({Key? key}) : super(key: key);
+
+  // Access AuthController for social login
+  AuthController get _authController => Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +135,7 @@ class RegisterView extends GetView<RegisterController> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _authController.signInWithFacebook(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3b5998),
                       shape: RoundedRectangleBorder(
@@ -151,7 +156,7 @@ class RegisterView extends GetView<RegisterController> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _authController.signInWithGoogle(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6B6B),
                       shape: RoundedRectangleBorder(
@@ -178,6 +183,7 @@ class RegisterView extends GetView<RegisterController> {
                 ),
               ],
             ),
+
             const SizedBox(height: 30),
           ],
         ),
@@ -186,29 +192,8 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildLogo() {
-    // If we had the image asset 'assets/logo.png', we would use it.
-    // For now, construct a similar look.
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        // Placeholder ID or just text
-        Icon(
-          Icons.flutter_dash,
-          color: Colors.teal,
-          size: 40,
-        ), // Bird placeholder
-        SizedBox(width: 10),
-        Text(
-          'Godevi',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Color(
-              0xFFE91E63,
-            ), // Pinkish common in such designs or purple
-          ),
-        ),
-      ],
+    return Center(
+      child: Image.asset('assets/images/godevi_logo_full.png', height: 80),
     );
   }
 

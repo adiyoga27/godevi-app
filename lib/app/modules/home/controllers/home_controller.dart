@@ -21,6 +21,7 @@ class HomeController extends GetxController {
 
   final isLoading = true.obs;
   final RxString currentLocation = "Bali, Indonesia".obs;
+  final Rx<Position?> currentPosition = Rx<Position?>(null);
 
   @override
   void onInit() {
@@ -41,6 +42,8 @@ class HomeController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+
+      currentPosition.value = position;
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,

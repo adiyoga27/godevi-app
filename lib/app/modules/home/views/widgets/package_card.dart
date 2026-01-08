@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/package_model.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PackageCard extends StatelessWidget {
   final PackageModel package;
+  final Rx<Position?>? currentPosition;
 
-  const PackageCard({Key? key, required this.package}) : super(key: key);
+  const PackageCard({Key? key, required this.package, this.currentPosition})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +67,53 @@ class PackageCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (currentPosition != null)
+                        Obx(() {
+                          if (currentPosition!.value == null ||
+                              package.lat == null ||
+                              package.lng == null) {
+                            return const SizedBox();
+                          }
+
+                          try {
+                            double startLat = currentPosition!.value!.latitude;
+                            double startLng = currentPosition!.value!.longitude;
+                            double endLat = double.parse(package.lat!);
+                            double endLng = double.parse(package.lng!);
+
+                            double distanceInMeters =
+                                Geolocator.distanceBetween(
+                                  startLat,
+                                  startLng,
+                                  endLat,
+                                  endLng,
+                                );
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 14,
+                                    color: AppTheme.primaryColor,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    "${(distanceInMeters / 1000).toStringAsFixed(1)} km",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } catch (e) {
+                            return const SizedBox();
+                          }
+                        }),
                       Text(
                         package.name ?? '',
                         maxLines: 2,
@@ -78,11 +128,7 @@ class PackageCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            currencyFormatter.format(
-                              (package.disc != null && package.disc != 0)
-                                  ? package.disc
-                                  : package.price ?? 0,
-                            ),
+                            "${currencyFormatter.format((package.disc != null && package.disc != 0) ? package.disc : package.price ?? 0)}/pax",
                             style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,

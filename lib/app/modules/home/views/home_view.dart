@@ -34,13 +34,52 @@ class HomeView extends GetView<HomeController> {
                   // Header
                   // Stack for custom header background if needed, leveraging HomeHeader
                   Stack(
+                    clipBehavior: Clip.none,
                     children: [
                       HomeSlider(sliders: controller.sliders),
                       const HomeHeader(),
+                      Positioned(
+                        bottom: -25,
+                        left: 20,
+                        right: 20,
+                        child: GestureDetector(
+                          onTap: () => Get.toNamed(Routes.SEARCH),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.search, color: Colors.grey),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Where are you going?',
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 50),
 
                   // Category Selector
                   const CategorySelector(),
@@ -78,6 +117,7 @@ class HomeView extends GetView<HomeController> {
                     itemBuilder: (context, index) {
                       return PackageCard(
                         package: controller.bestPackages[index],
+                        currentPosition: controller.currentPosition,
                       );
                     },
                   ),

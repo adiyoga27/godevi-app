@@ -17,7 +17,12 @@ class RegisterController extends GetxController {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
+      Get.snackbar(
+        'Warning',
+        'Please fill all field',
+        backgroundColor: Colors.amber,
+        colorText: Colors.black,
+      );
       return;
     }
 
