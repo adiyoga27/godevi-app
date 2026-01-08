@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/home/controllers/home_controller.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
+import 'package:godevi_app/app/modules/article_list/controllers/article_list_controller.dart'
+    as godevi_app;
 import 'package:intl/intl.dart';
 
 class ArticleCard extends StatelessWidget {
@@ -111,32 +113,81 @@ class ArticleCard extends StatelessWidget {
   }
 
   Widget _buildLikeButton() {
-    final controller = Get.find<HomeController>();
-    final authService = Get.find<AuthService>();
-    final userId = authService.user.value?.id;
+    return Obx(() {
+      ArticleModel? reactiveArticle;
+      dynamic activeController;
 
-    final isLiked = article.likedBy?.contains(userId) ?? false;
-    final likeCount = article.likedBy?.length ?? 0;
+      // Try finding ArticleListController
+      if (Get.isRegistered<godevi_app.ArticleListController>()) {
+        final alc = Get.find<godevi_app.ArticleListController>();
+        // Check regular list
+        reactiveArticle = alc.articles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        // Check popular list if not found
+        reactiveArticle ??= alc.popularArticles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        if (reactiveArticle != null) activeController = alc;
+      }
 
-    return GestureDetector(
-      onTap: () => controller.toggleLike(article),
-      child: Row(
-        children: [
-          Icon(
-            isLiked ? Icons.favorite : Icons.favorite_border,
-            color: isLiked ? Colors.red : Colors.grey,
-            size: 16,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            "$likeCount",
-            style: TextStyle(
-              color: isLiked ? Colors.red : Colors.grey,
-              fontSize: 12,
+      // If not found, try HomeController
+      if (reactiveArticle == null && Get.isRegistered<HomeController>()) {
+        final hc = Get.find<HomeController>();
+        reactiveArticle = hc.articles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        reactiveArticle ??= hc.popularArticles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        if (reactiveArticle != null) activeController = hc;
+      }
+
+      // Fallback if not found in any reactive list (shouldn't happen if hierarchy is correct)
+      final currentArticle = reactiveArticle ?? article;
+
+      final authService = Get.find<AuthService>();
+      final userId = authService.user.value?.id;
+      final isLiked = currentArticle.likedBy?.contains(userId) ?? false;
+      final likeCount = currentArticle.likedBy?.length ?? 0;
+
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            if (activeController != null) {
+              activeController.toggleLike(currentArticle);
+            } else {
+              // Fallback: try using HomeController even if article not in its list (e.g. from deep link?)
+              if (Get.isRegistered<HomeController>()) {
+                Get.find<HomeController>().toggleLike(currentArticle);
+              }
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : Colors.grey,
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  "$likeCount",
+                  style: TextStyle(
+                    color: isLiked ? Colors.red : Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }

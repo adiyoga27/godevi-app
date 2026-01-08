@@ -4,6 +4,7 @@ class CommentModel {
   String? userName;
   String? userAvatar;
   String? comment;
+  String? createdAt;
 
   CommentModel({
     this.id,
@@ -19,6 +20,7 @@ class CommentModel {
     userName = json['user_name'];
     userAvatar = json['user_avatar'];
     comment = json['comment'];
+    createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {

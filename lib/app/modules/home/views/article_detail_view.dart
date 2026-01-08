@@ -6,6 +6,8 @@ import 'package:godevi_app/app/data/models/article_model.dart';
 import 'package:godevi_app/app/modules/home/controllers/home_controller.dart';
 import 'package:godevi_app/app/data/services/auth_service.dart';
 import 'package:godevi_app/app/modules/home/controllers/article_detail_controller.dart';
+import 'package:godevi_app/app/modules/article_list/controllers/article_list_controller.dart'
+    as godevi_app;
 import 'package:intl/intl.dart';
 
 class ArticleDetailView extends StatelessWidget {
@@ -205,19 +207,52 @@ class ArticleDetailView extends StatelessWidget {
 
   Widget _buildLikeSection(ArticleModel article) {
     return Obx(() {
-      final homeController = Get.find<HomeController>();
-      final reactiveArticle = homeController.articles.firstWhere(
-        (element) => element.id == article.id,
-        orElse: () => article,
-      );
+      ArticleModel? reactiveArticle;
+      dynamic activeController;
+
+      // Try finding ArticleListController
+      if (Get.isRegistered<godevi_app.ArticleListController>()) {
+        final alc = Get.find<godevi_app.ArticleListController>();
+        // Check regular list
+        reactiveArticle = alc.articles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        // Check popular list if not found
+        reactiveArticle ??= alc.popularArticles.firstWhereOrNull(
+          (e) => e.id == article.id,
+        );
+        if (reactiveArticle != null) activeController = alc;
+      }
+
+      // If not found, try HomeController
+      if (reactiveArticle == null && Get.isRegistered<HomeController>()) {
+        final homeController = Get.find<HomeController>();
+        reactiveArticle = homeController.articles.firstWhereOrNull(
+          (element) => element.id == article.id,
+        );
+        reactiveArticle ??= homeController.popularArticles.firstWhereOrNull(
+          (element) => element.id == article.id,
+        );
+        if (reactiveArticle != null) activeController = homeController;
+      }
+
+      final currentArticle = reactiveArticle ?? article;
 
       final authService = Get.find<AuthService>();
       final userId = authService.user.value?.id;
-      final isLiked = reactiveArticle.likedBy?.contains(userId) ?? false;
-      final likeCount = reactiveArticle.likedBy?.length ?? 0;
+      final isLiked = currentArticle.likedBy?.contains(userId) ?? false;
+      final likeCount = currentArticle.likedBy?.length ?? 0;
 
       return InkWell(
-        onTap: () => homeController.toggleLike(reactiveArticle),
+        onTap: () {
+          if (activeController != null) {
+            activeController.toggleLike(currentArticle);
+          } else {
+            if (Get.isRegistered<HomeController>()) {
+              Get.find<HomeController>().toggleLike(currentArticle);
+            }
+          }
+        },
         borderRadius: BorderRadius.circular(20),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -247,11 +282,108 @@ class ArticleDetailView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Comments",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Obx(
+          () => Text(
+            "Comments (${controller.comments.length})",
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
+
+        // Input Area
+        Obx(() {
+          if (!authService.isLoggedIn.value) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue[100]!),
+              ),
+              child: Column(
+                children: [
+                  const Text("Join the discussion"),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () => Get.toNamed('/login'),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Login to Comment"),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                backgroundImage: authService.user.value?.avatar != null
+                    ? CachedNetworkImageProvider(
+                        authService.user.value!.avatar!,
+                      )
+                    : null,
+                child: authService.user.value?.avatar == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextField(
+                      controller: controller.commentController,
+                      decoration: InputDecoration(
+                        hintText: "What are your thoughts?",
+                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.all(12),
+                      ),
+                      minLines: 1,
+                      maxLines: 4,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      onPressed: controller.isPostingComment.value
+                          ? null
+                          : () => controller.postComment(),
+                      icon: controller.isPostingComment.value
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.send, size: 16),
+                      label: const Text("Post"),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }),
+
+        const SizedBox(height: 24),
 
         // Comment List
         Obx(() {
@@ -259,19 +391,42 @@ class ArticleDetailView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (controller.comments.isEmpty) {
-            return const Text(
-              "No comments yet.",
-              style: TextStyle(color: Colors.grey),
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.chat_bubble_outline,
+                      size: 48,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "No comments yet. Be the first!",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             );
           }
           return ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: controller.comments.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 15),
+            separatorBuilder: (_, __) => const SizedBox(height: 20),
             itemBuilder: (context, index) {
               final comment = controller.comments[index];
               final isOwner = authService.user.value?.id == comment.userId;
+
+              // Format date if available
+              String timeAgo = '';
+              if (comment.createdAt != null) {
+                // Simple parsing or use timeago package if available.
+                // Fallback to raw string
+                timeAgo = comment.createdAt!;
+              }
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,83 +435,75 @@ class ArticleDetailView extends StatelessWidget {
                     backgroundImage: comment.userAvatar != null
                         ? CachedNetworkImageProvider(comment.userAvatar!)
                         : null,
-                    radius: 20,
+                    radius: 18,
                     child: comment.userAvatar == null
-                        ? const Icon(Icons.person)
+                        ? const Icon(Icons.person, size: 20)
                         : null,
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          comment.userName ?? 'User',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(comment.comment ?? ''),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                comment.userName ?? 'User',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              if (timeAgo.isNotEmpty)
+                                Text(
+                                  timeAgo,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            comment.comment ?? '',
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              height: 1.4,
+                            ),
+                          ),
+                          if (isOwner) ...[
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () =>
+                                    controller.deleteComment(comment.id!),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                  if (isOwner)
-                    IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                      onPressed: () => controller.deleteComment(comment.id!),
-                    ),
                 ],
               );
             },
-          );
-        }),
-
-        const SizedBox(height: 20),
-        const Divider(),
-
-        // Create Comment
-        Obx(() {
-          if (!authService.isLoggedIn.value) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: () => Get.toNamed('/login'),
-                child: const Text("Login to Comment"),
-              ),
-            );
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextField(
-                controller: controller.commentController,
-                decoration: const InputDecoration(
-                  hintText: "Write a comment...",
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: controller.isPostingComment.value
-                    ? null
-                    : () => controller.postComment(),
-                child: controller.isPostingComment.value
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text("Post Comment"),
-              ),
-            ],
           );
         }),
       ],

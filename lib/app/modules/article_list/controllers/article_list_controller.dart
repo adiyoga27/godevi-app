@@ -53,8 +53,6 @@ class ArticleListController extends GetxController {
     Get.toNamed('/article-detail', arguments: article);
   }
 
-import 'package:godevi_app/app/data/services/auth_service.dart';
-
   void toggleLike(ArticleModel article) async {
     final authService = Get.find<AuthService>();
     if (!authService.isLoggedIn.value) {
