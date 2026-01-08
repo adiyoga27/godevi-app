@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/login/controllers/login_controller.dart';
+import 'package:godevi_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
-
 import 'package:godevi_app/core/theme/app_theme.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({Key? key}) : super(key: key);
+
+  // Access AuthController for social login
+  AuthController get _authController => Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class LoginView extends GetView<LoginController> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _authController.signInWithFacebook(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3b5998), // Facebook Blue
                       shape: RoundedRectangleBorder(
@@ -62,7 +65,7 @@ class LoginView extends GetView<LoginController> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _authController.signInWithGoogle(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6B6B), // Google Redish
                       shape: RoundedRectangleBorder(
@@ -73,9 +76,6 @@ class LoginView extends GetView<LoginController> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        // Use a text 'G' or Icon if available. Material Icons doesn't have Google logo default.
-                        // Using a generic icon or text "G" for now to match style.
-                        // In real app we use assets.
                         Text(
                           'G',
                           style: TextStyle(

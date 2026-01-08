@@ -29,9 +29,14 @@ class AuthService extends GetxService {
     _box.write('user', newUser.toJson());
   }
 
+  void saveToken(String token) {
+    _box.write('auth_token', token);
+  }
+
   void logout() {
     user.value = null;
     isLoggedIn.value = false;
     _box.remove('user');
+    _box.remove('auth_token');
   }
 }

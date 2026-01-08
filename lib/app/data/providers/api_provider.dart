@@ -74,4 +74,22 @@ class ApiProvider extends GetConnect {
       post('/v2/checkout/homestay', FormData(data));
   Future<Response> checkoutTour(Map<String, dynamic> data) =>
       post('/v2/checkout/tour', FormData(data));
+
+  // Social login (Google/Facebook)
+  // Sends provider data to backend for authentication
+  Future<Response> socialLogin({
+    required String provider,
+    required String providerId,
+    required String name,
+    required String email,
+  }) {
+    final form = FormData({
+      'provider': provider,
+      'provider_id': providerId,
+      'name': name,
+      'email': email,
+    });
+    // Use full URL to avoid baseUrl mismatch
+    return post('/auth/login-sosmed', form);
+  }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Godevi App</string>
+    <string name="facebook_app_id">588298231660308</string>
+    <string name="fb_login_protocol_scheme">fb588298231660308</string>
+    <string name="facebook_client_token">75069eea0cbf1d5a4d436fa87371fe8d</string>
+</resources>
