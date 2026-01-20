@@ -23,6 +23,12 @@ class ReservationView extends GetView<ReservationController> {
         elevation: 0,
         centerTitle: false,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () => controller.fetchTransactions(),
+            icon: const Icon(Icons.refresh, color: Colors.black),
+          ),
+        ],
       ),
       body: Column(
         children: [
