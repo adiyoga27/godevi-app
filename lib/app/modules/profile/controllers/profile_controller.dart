@@ -67,10 +67,15 @@ class ProfileController extends GetxController {
         selectedImage.value,
       );
 
-      if (response.statusCode == 200 && response.body['status'] == true) {
-        Get.snackbar("Success", "Profile updated successfully");
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          "Success",
+          "Profile updated successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
         await fetchProfile(); // Refresh data
-        Get.back(); // Close Edit Page
+        // Get.back(); // Close Edit Page
       } else {
         Get.snackbar(
           "Error",

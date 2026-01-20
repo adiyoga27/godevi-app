@@ -19,7 +19,7 @@ class ApiProvider extends GetConnect {
 
     httpClient.addResponseModifier((request, response) {
       print('\x1B[33m[API Response] ${request.method} ${request.url}\x1B[0m');
-      print('\x1B[33mStatus: ${response.statusCode}\x1B[0m');
+      print('\x1B[33mStatus Code: ${response.statusCode}\x1B[0m');
       print('\x1B[33mBody: ${response.bodyString}\x1B[0m');
       return response;
     });
