@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:godevi_app/app/data/models/user_model.dart';
 
+import 'package:godevi_app/app/data/services/fcm_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
@@ -17,8 +18,14 @@ class AuthService extends GetxService {
     if (userData != null) {
       try {
         user.value = UserModel.fromJson(userData);
-
         isLoggedIn.value = true;
+
+        // Subscribe to topics
+        if (user.value?.id != null) {
+          final fcm = Get.find<FCMService>();
+          fcm.subscribeToTopic('all');
+          fcm.subscribeToTopic(user.value!.id.toString());
+        }
       } catch (e) {
         print('Error reading user data: $e');
         _box.remove('user');
@@ -31,6 +38,18 @@ class AuthService extends GetxService {
     user.value = newUser;
     isLoggedIn.value = true;
     _box.write('user', newUser.toJson());
+
+    // Subscribe to topics
+    if (newUser.id != null) {
+      final fcm = Get.find<FCMService>();
+      fcm.subscribeToTopic('all');
+      fcm.subscribeToTopic(newUser.id.toString());
+    }
+  }
+
+  void saveUser(UserModel updatedUser) {
+    user.value = updatedUser;
+    _box.write('user', updatedUser.toJson());
   }
 
   void saveToken(String token) {
@@ -38,6 +57,17 @@ class AuthService extends GetxService {
   }
 
   Future<void> logout() async {
+    // Unsubscribe from topics
+    try {
+      if (user.value?.id != null) {
+        final fcm = Get.find<FCMService>();
+        await fcm.unsubscribeFromTopic('all');
+        await fcm.unsubscribeFromTopic(user.value!.id.toString());
+      }
+    } catch (e) {
+      print('Error unsubscribing FCM topics: $e');
+    }
+
     user.value = null;
     isLoggedIn.value = false;
     _box.remove('user');

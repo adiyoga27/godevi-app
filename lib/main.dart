@@ -8,14 +8,19 @@ import 'package:godevi_app/firebase_options.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:godevi_app/app/data/services/fcm_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Services
   await GetStorage.init();
-  await Get.putAsync(() => AuthService().init());
-  Get.put(ApiProvider());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Get.putAsync(() => AuthService().init());
+  await Get.putAsync(() => FCMService().init());
+  Get.put(ApiProvider());
+
   runApp(
     GetMaterialApp(
       title: "Godevi",

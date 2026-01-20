@@ -73,12 +73,28 @@ class ApiProvider extends GetConnect {
       post('/v2/articles/like/$slug', {});
   Future<Response> getCancelTransactions(String email) =>
       get('/transaction/cancel/$email');
+  Future<Response> cancelTransaction(String code) =>
+      delete('/transaction/delete/$code');
   Future<Response> checkoutEvent(Map<String, dynamic> data) =>
       post('/v2/checkout/event', FormData(data));
   Future<Response> checkoutHomestay(Map<String, dynamic> data) =>
       post('/v2/checkout/homestay', FormData(data));
   Future<Response> checkoutTour(Map<String, dynamic> data) =>
       post('/v2/checkout/tour', FormData(data));
+
+  // Profile
+  Future<Response> getProfile() => get('/v2/auth/profile');
+
+  Future<Response> updateProfile(Map<String, String> data, dynamic avatarFile) {
+    final form = FormData(data);
+    if (avatarFile != null) {
+      // FormData in GetConnect handles file uploads if passed as MultipartFile
+      form.files.add(
+        MapEntry('avatar', MultipartFile(avatarFile, filename: 'avatar.jpg')),
+      );
+    }
+    return post('/v2/auth/profile/update', form);
+  }
 
   // Social login (Google/Facebook)
   // Sends provider data to backend for authentication

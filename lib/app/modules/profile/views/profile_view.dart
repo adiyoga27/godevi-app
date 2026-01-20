@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/profile/controllers/profile_controller.dart';
+import 'package:godevi_app/app/modules/profile/views/edit_profile_view.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
 
@@ -23,53 +24,57 @@ class ProfileView extends GetView<ProfileController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Obx(
-                        () => Text(
-                          controller.user?.name ?? 'User',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+            // ... imports
+            InkWell(
+              onTap: () => Get.to(() => const EditProfileView()),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(
+                          () => Text(
+                            controller.user?.name ?? 'User',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'View and edit profile',
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        const Text(
+                          'View and edit profile',
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[200],
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey[200],
+                    ),
+                    child: ClipOval(
+                      child: Obx(() {
+                        final avatarUrl = controller.user?.avatar;
+                        if (avatarUrl != null && avatarUrl.isNotEmpty) {
+                          return CachedNetworkImage(
+                            imageUrl: avatarUrl,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) =>
+                                const Icon(Icons.person, color: Colors.grey),
+                          );
+                        }
+                        return const Icon(Icons.person, color: Colors.grey);
+                      }),
+                    ),
                   ),
-                  child: ClipOval(
-                    child: Obx(() {
-                      final avatarUrl = controller.user?.avatar;
-                      if (avatarUrl != null && avatarUrl.isNotEmpty) {
-                        return CachedNetworkImage(
-                          imageUrl: avatarUrl,
-                          fit: BoxFit.cover,
-                          errorWidget: (_, __, ___) =>
-                              const Icon(Icons.person, color: Colors.grey),
-                        );
-                      }
-                      return const Icon(Icons.person, color: Colors.grey);
-                    }),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 40),
 

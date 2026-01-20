@@ -5,6 +5,7 @@ import 'package:godevi_app/app/data/models/transaction_model.dart';
 import 'package:godevi_app/app/modules/reservation/controllers/reservation_controller.dart';
 
 import 'package:godevi_app/app/modules/shared/widgets/skeletons_widget.dart';
+import 'package:godevi_app/app/modules/shared/widgets/countdown_timer_widget.dart';
 import 'package:intl/intl.dart';
 
 class ReservationView extends GetView<ReservationController> {
@@ -246,21 +247,53 @@ class ReservationView extends GetView<ReservationController> {
                       ],
                     ),
                     const SizedBox(height: 4),
+                    // Invoice Code
+                    if (transaction.code != null)
+                      Text(
+                        "Code: ${transaction.code}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    const SizedBox(height: 4),
                     Text(
                       transaction.location ?? '-',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 4),
                     if (transaction.date != null)
-                      Text(
-                        // Assuming date is in ISO8601 or similar parsable string.
-                        // If exact format is needed, better to handle in model or use helper.
-                        // For now simple display or basic format using intl.
-                        DateFormat(
-                          'd MMM yyyy, HH:mm',
-                        ).format(DateTime.parse(transaction.date!)),
-                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            DateFormat(
+                              'd MMM yyyy, HH:mm',
+                            ).format(DateTime.parse(transaction.date!)),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          // Countdown for Unpaid
+                          if (controller.currentTab.value == 0)
+                            CountdownTimerWidget(
+                              targetDate: DateTime.parse(
+                                transaction.date!,
+                              ).add(const Duration(hours: 24)),
+                              textStyle: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
+                            ),
+                        ],
+                      )
+                    else
+                      // Ensure valid layout even if date is null, though date should exist
+                      const SizedBox.shrink(),
+
                     const SizedBox(height: 8),
                     Row(
                       children: [

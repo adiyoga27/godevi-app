@@ -127,6 +127,12 @@ class ReservationController extends GetxController {
   }
 
   Future<void> cancelTransaction(TransactionModel transaction) async {
+    // Ensure clean state: Close any existing snackbars before starting
+    if (Get.isSnackbarOpen) {
+      Get.closeAllSnackbars();
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
     Get.defaultDialog(
       title: "Cancel Transaction",
       middleText: "Are you sure you want to cancel this transaction?",
@@ -134,20 +140,50 @@ class ReservationController extends GetxController {
       textCancel: "No",
       confirmTextColor: Colors.white,
       onConfirm: () async {
+        // Ensure we close any existing Snackbars so Get.back() closes the Dialog
+        if (Get.isSnackbarOpen) Get.closeAllSnackbars();
         Get.back(); // Close dialog
+
         isLoading.value = true;
         // Call API
         try {
-          // await _apiProvider.cancelTransaction(transaction.uuid ?? transaction.id.toString());
-          // Since ApiProvider doesn't have it yet, we just simulate or print
-          print("Cancelling transaction: ${transaction.uuid}");
+          if (transaction.code == null) {
+            Get.snackbar("Error", "Invalid transaction code");
+            return;
+          }
+          final response = await _apiProvider.cancelTransaction(
+            transaction.code!,
+          );
 
-          // Refresh list
-          await fetchTransactions();
-          Get.back(); // Close Detail View
-          Get.snackbar("Success", "Transaction cancelled successfully");
+          if (response.statusCode == 200 &&
+              (response.body['status'] == true ||
+                  response.body['status'] == 'success')) {
+            // Ensure we close any existing Snackbars so Get.back() closes the Page
+            if (Get.isSnackbarOpen) Get.closeAllSnackbars();
+
+            // Close the Detail View first (return to list)
+            Get.back();
+
+            Get.snackbar(
+              "Success",
+              response.body['message'] ?? "Transaction cancelled successfully",
+            );
+
+            // Refresh list
+            await fetchTransactions();
+          } else {
+            // Ensure we close any existing Snackbars
+            if (Get.isSnackbarOpen) Get.closeAllSnackbars();
+
+            // Close the Detail View
+            Get.back();
+            Get.snackbar(
+              "Error",
+              response.body['message'] ?? "Failed to cancel transaction",
+            );
+          }
         } catch (e) {
-          Get.snackbar("Error", "Failed to cancel transaction");
+          Get.snackbar("Error", "Failed to cancel transaction: $e");
         } finally {
           isLoading.value = false;
         }

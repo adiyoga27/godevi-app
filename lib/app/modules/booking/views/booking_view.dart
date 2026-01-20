@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/modules/booking/controllers/booking_controller.dart';
-import 'package:godevi_app/core/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 
 class BookingView extends GetView<BookingController> {
@@ -10,368 +8,252 @@ class BookingView extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
+    // If no package is passed, maybe show error or go back
     if (controller.package == null) {
-      return const Scaffold(body: Center(child: Text("Package not found")));
+      return Scaffold(
+        appBar: AppBar(title: const Text('Booking')),
+        body: const Center(child: Text("No package selected")),
+      );
     }
 
     final currencyFormatter = NumberFormat.currency(
       locale: 'id_ID',
-      symbol: 'Rp',
-      decimalDigits: 0,
+      symbol: 'Rp ',
     );
 
-    // Determine info price
-    final displayPrice =
-        (controller.package?.disc != null && controller.package!.disc! > 0)
-        ? controller.package!.disc!
-        : controller.package?.price ?? 0;
-
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light background
-      appBar: AppBar(
-        title: const Text(
-          "Booking Form",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Booking Confirmation'), elevation: 0),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Package Visualization (Standard for both Tour and Event)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: controller.package?.defaultImg ?? '',
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) => Container(
-                  height: 200,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                ),
+            // Package Summary
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        controller.package?.type == 'event'
-                            ? "Event Name"
-                            : "Tour Packages Name",
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                      Text(
-                        controller.package?.name ?? '-',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        controller.package?.type == 'event'
-                            ? "Category"
-                            : "Type",
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                      Text(
-                        controller.package?.categoryName ?? '-',
-                        style: TextStyle(
-                          fontSize: 14, // Slightly bigger than label
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      currencyFormatter.format(displayPrice),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        controller.package?.defaultImg ?? '',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (ctx, err, stack) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image_not_supported),
+                        ),
                       ),
                     ),
-                    Text(
-                      "/per pax",
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            controller.package?.name ?? 'Package Name',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            currencyFormatter.format(
+                              (controller.package?.disc != null &&
+                                      controller.package!.disc! > 0)
+                                  ? controller.package!.disc
+                                  : controller.package!.price ?? 0,
+                            ),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 16),
-            const Divider(), // Separator
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 30),
-            _buildSectionTitle("Customer Information"),
-            const SizedBox(height: 16),
-            _buildTextField("Customer Name", controller.nameController),
-            const SizedBox(height: 16),
-            _buildTextField(
-              "Email",
-              controller.emailController,
+            const Text(
+              "Customer Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller.nameController,
+              decoration: const InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller.emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email Address',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
               keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
-            _buildTextField("Address", controller.addressController),
-            const SizedBox(height: 16),
-            _buildTextField(
-              "Phone",
-              controller.phoneController,
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller.phoneController,
+              decoration: const InputDecoration(
+                labelText: 'Phone Number',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.phone),
+              ),
               keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: 16),
-            _buildDropdownGender(),
-
-            const SizedBox(height: 30),
-            _buildSectionTitle(
-              controller.package?.type == 'event'
-                  ? "Reservation Information"
-                  : "Book Information",
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller.addressController,
+              decoration: const InputDecoration(
+                labelText: 'Address',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.home),
+              ),
+              maxLines: 2,
             ),
-            const SizedBox(height: 16),
-            // Check-in Date (Only for Tour and Homestay)
-            if (controller.package?.type != 'event') ...[
-              GestureDetector(
-                onTap: () => controller.selectDate(context),
-                child: AbsorbPointer(
-                  child: _buildTextField(
-                    "Check-in Date",
-                    controller.dateController,
-                    suffixIcon: Icons.calendar_today,
-                    hint: "Select Date",
+
+            const SizedBox(height: 24),
+            const Text(
+              "Booking Details",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            // Date Picker (Only if not event, or implies logic from controller)
+            // Controller logic says: isEvent -> checkoutEvent (no date check in controller submit)
+            // isHomestay or isTour -> check dateController
+            // We can use the getters from controller to decide visibility
+            // But controller instance is available.
+            // Note: mixin GetView gives us 'controller'
+            if (!controller.isEvent)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: TextField(
+                  controller: controller.dateController,
+                  readOnly: true,
+                  onTap: () => controller.selectDate(context),
+                  decoration: const InputDecoration(
+                    labelText: 'Select Date',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.calendar_today),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
-            _buildTextField(
-              "Pax",
-              controller.paxController,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            Builder(
-              builder: (context) {
-                final price =
-                    (controller.package?.disc != null &&
-                        controller.package!.disc! > 0)
-                    ? controller.package!.disc!
-                    : controller.package?.price ?? 0;
-                return _buildReadOnlyField(
-                  "Price / Pax",
-                  currencyFormatter.format(price),
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: _buildTextField(
-                "Special Note",
-                controller.noteController,
-                maxLines: 4,
-                hint: "Input your note transaction",
-              ),
-            ),
 
-            const SizedBox(height: 40),
-            const Divider(),
-            const SizedBox(height: 20),
-
-            // Total and Button
-            Obx(
-              () => Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "Total : ${currencyFormatter.format(controller.totalPrice.value)}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0D0846),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller.paxController,
+                    decoration: const InputDecoration(
+                      labelText: 'Quantity (Pax)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.people),
                     ),
+                    keyboardType: TextInputType.number,
                   ),
-                ],
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller.noteController,
+              decoration: const InputDecoration(
+                labelText: 'Special Notes',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.note),
+              ),
+              maxLines: 2,
+            ),
+
+            const SizedBox(height: 32),
+
+            // Total Price Section
+            Obx(
+              () => Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total Payment",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      currencyFormatter.format(controller.totalPrice.value),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "*Please check your form, because the order cannot be changed",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 24),
+
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: controller.submitBooking,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, // Match design
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              height: 50,
+              child: Obx(
+                () => ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : controller.submitBooking,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "To Payment",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                  child: controller.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          "Confirm Booking",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF0D0846),
-      ),
-    );
-  }
-
-  Widget _buildReadOnlyTextField(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReadOnlyField(String label, String value) =>
-      _buildReadOnlyTextField(label, value);
-
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller, {
-    int maxLines = 1,
-    String? hint,
-    TextInputType? keyboardType,
-    IconData? suffixIcon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 20) : null,
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownGender() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Gender",
-          style: TextStyle(fontSize: 12, color: Colors.grey),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: Obx(
-            () => DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: controller.gender.value,
-                isExpanded: true,
-                items: <String>['Male', 'Female'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) controller.gender.value = newValue;
-                },
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
