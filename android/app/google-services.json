@@ -12,7 +12,20 @@
           "package_name": "com.codingaja.godevi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "372015866202-kjn9stq4h22r0e599lah6n54n2aapoj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codingaja.godevi",
+            "certificate_hash": "e095397658cb3330c65079d9e7184ba74e23692e"
+          }
+        },
+        {
+          "client_id": "372015866202-q7km4jdqo2qqcv4u4r4ncn77pv22ci8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCtoc3t_5inmv5wG3d4MUjFFD-ywOdfcXE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372015866202-q7km4jdqo2qqcv4u4r4ncn77pv22ci8t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "372015866202-ugbelak630ihjufh9qd67ld49kcfksmg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.godeviApp"
+              }
+            }
+          ]
         }
       }
     }

@@ -250,6 +250,17 @@ class ReservationView extends GetView<ReservationController> {
                       transaction.location ?? '-',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
+                    const SizedBox(height: 4),
+                    if (transaction.date != null)
+                      Text(
+                        // Assuming date is in ISO8601 or similar parsable string.
+                        // If exact format is needed, better to handle in model or use helper.
+                        // For now simple display or basic format using intl.
+                        DateFormat(
+                          'd MMM yyyy, HH:mm',
+                        ).format(DateTime.parse(transaction.date!)),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      ),
                     const SizedBox(height: 8),
                     Row(
                       children: [

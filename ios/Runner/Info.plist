@@ -49,5 +49,31 @@
 	<string>This app needs access to location when open to find nearby tours.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background to find nearby tours.</string>
+	<key>FacebookAppID</key>
+	<string>588298231660308</string>
+	<key>FacebookClientToken</key>
+	<string>75069eea0cbf1d5a4d436fa87371fe8d</string>
+	<key>FacebookDisplayName</key>
+	<string>Godevi</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb588298231660308</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.372015866202-ugbelak630ihjufh9qd67ld49kcfksmg</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

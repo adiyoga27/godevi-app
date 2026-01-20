@@ -79,8 +79,12 @@ class ReservationController extends GetxController {
           );
         }
 
-        // Sort by id or date descending if possible
-        allTransactions.sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0));
+        // Sort by date descending
+        allTransactions.sort((a, b) {
+          if (a.date == null) return 1;
+          if (b.date == null) return -1;
+          return b.date!.compareTo(a.date!);
+        });
 
         transactions.assignAll(allTransactions);
       }

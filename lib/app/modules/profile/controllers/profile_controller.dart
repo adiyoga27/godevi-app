@@ -7,8 +7,8 @@ class ProfileController extends GetxController {
 
   get user => _authService.user.value;
 
-  void logout() {
-    _authService.logout();
+  Future<void> logout() async {
+    await _authService.logout();
     Get.offAllNamed(Routes.HOME);
   }
 }

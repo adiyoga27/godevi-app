@@ -184,26 +184,40 @@ class BookingController extends GetxController {
         final String? linkPayment = responseData['link_payment'];
 
         if (linkPayment != null) {
-          // 1. Reset stack to Home (Main View)
+          // 1. Navigate to Payment Page FIRST (Keep BookingController alive)
+          await Get.to(() => PaymentWebView(url: linkPayment));
+
+          // 2. After payment (or back pressed), reset stack to Home
           await Get.offAllNamed(Routes.HOME);
 
-          // 2. Force initialization of MainController and set index to Reservation (1)
+          // 3. Set index to Reservation (1)
           try {
-            final mainController = Get.find<MainController>();
-            mainController.currentIndex.value = 1;
+            // Find MainController - might need to ensure it's put in memory if offAllNamed recreated it
+            // usually Get.offAllNamed(Routes.HOME) will initialize MainBinding
+            if (Get.isRegistered<MainController>()) {
+              final mainController = Get.find<MainController>();
+              mainController.currentIndex.value = 1;
+            } else {
+              // Wait a bit or accept it defaults to 0
+              // In standard GetX, offAllNamed triggers bindings.
+              // We can rely on user manually going to Reservation or simple default.
+              // But let's try to set it if possible.
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (Get.isRegistered<MainController>()) {
+                  Get.find<MainController>().currentIndex.value = 1;
+                }
+              });
+            }
           } catch (e) {
             print("Error initializing MainController: $e");
           }
-
-          // 3. Open Payment Page
-          Get.to(() => PaymentWebView(url: linkPayment));
         } else {
           Get.snackbar("Success", "Booking Success but no payment link found.");
           await Get.offAllNamed(Routes.HOME);
-          try {
-            final mainController = Get.find<MainController>();
-            mainController.currentIndex.value = 1;
-          } catch (_) {}
+          // Same logic for redirection
+          if (Get.isRegistered<MainController>()) {
+            Get.find<MainController>().currentIndex.value = 1;
+          }
         }
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Checkout Failed");
