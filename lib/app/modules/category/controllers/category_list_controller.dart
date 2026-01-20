@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/article_model.dart';
 import 'package:godevi_app/app/data/models/event_model.dart';
@@ -86,7 +87,12 @@ class CategoryListController extends GetxController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          Get.snackbar('Permission Denied', 'Location permission is required.');
+          Get.snackbar(
+            'Permission Denied',
+            'Location permission is required.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
           isLoading.value = false;
           return;
         }
@@ -96,6 +102,8 @@ class CategoryListController extends GetxController {
         Get.snackbar(
           'Permission Denied',
           'Location permissions are permanently denied, we cannot request permissions.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
         isLoading.value = false;
         return;
@@ -167,10 +175,20 @@ class CategoryListController extends GetxController {
               .toList(),
         );
       } else {
-        Get.snackbar("Error", "Failed to fetch nearby tours");
+        Get.snackbar(
+          "Error",
+          "Failed to fetch nearby tours",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred: $e");
+      Get.snackbar(
+        "Error",
+        "An error occurred: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

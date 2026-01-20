@@ -63,13 +63,28 @@ class ArticleDetailController extends GetxController {
         // Assuming 200 OK or 201 Created
         commentController.clear();
         fetchComments(article.slug ?? '');
-        Get.snackbar("Success", "Comment posted successfully");
+        Get.snackbar(
+          "Success",
+          "Comment posted successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       } else {
-        Get.snackbar("Error", "Failed to post comment: ${response.statusText}");
+        Get.snackbar(
+          "Error",
+          "Failed to post comment: ${response.statusText}",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       print("Error posting comment: $e");
-      Get.snackbar("Error", "An unexpected error occurred");
+      Get.snackbar(
+        "Error",
+        "An unexpected error occurred",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isPostingComment.value = false;
     }
@@ -80,9 +95,19 @@ class ArticleDetailController extends GetxController {
       final response = await _apiProvider.deleteComment(id);
       if (response.statusCode == 200) {
         comments.removeWhere((c) => c.id == id);
-        Get.snackbar("Success", "Comment deleted");
+        Get.snackbar(
+          "Success",
+          "Comment deleted",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       } else {
-        Get.snackbar("Error", "Failed to delete comment");
+        Get.snackbar(
+          "Error",
+          "Failed to delete comment",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       print("Error deleting comment: $e");

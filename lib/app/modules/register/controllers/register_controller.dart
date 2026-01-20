@@ -27,12 +27,22 @@ class RegisterController extends GetxController {
     }
 
     if (passwordController.text != repeatPasswordController.text) {
-      Get.snackbar('Error', 'Passwords do not match');
+      Get.snackbar(
+        'Error',
+        'Passwords do not match',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
     if (!isTermsAgreed.value) {
-      Get.snackbar('Error', 'Please agree to terms of service');
+      Get.snackbar(
+        'Error',
+        'Please agree to terms of service',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -46,13 +56,28 @@ class RegisterController extends GetxController {
       });
 
       if (response.status.hasError) {
-        Get.snackbar('Error', response.bodyString ?? 'Registration failed');
+        Get.snackbar(
+          'Error',
+          response.bodyString ?? 'Registration failed',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       } else {
-        Get.snackbar('Success', 'Registration successful. Please login.');
+        Get.snackbar(
+          'Success',
+          'Registration successful. Please login.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
         Get.back(); // Go back to login
       }
     } catch (e) {
-      Get.snackbar('Error', 'An unexpected error occurred');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:godevi_app/app/data/models/transaction_model.dart';
 import 'package:godevi_app/app/data/providers/api_provider.dart';
@@ -26,7 +27,12 @@ class TransactionDetailController extends GetxController {
       } else {
         // Handle error: Invalid arguments
         isLoading.value = false;
-        Get.snackbar("Error", "Invalid transaction details");
+        Get.snackbar(
+          "Error",
+          "Invalid transaction details",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } else {
       isLoading.value = false;
@@ -40,7 +46,12 @@ class TransactionDetailController extends GetxController {
       _handleResponse(response, type);
     } catch (e) {
       print("Error fetching detail: $e");
-      Get.snackbar("Error", "Something went wrong");
+      Get.snackbar(
+        "Error",
+        "Something went wrong",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -60,7 +71,12 @@ class TransactionDetailController extends GetxController {
       _handleResponse(response, type);
     } catch (e) {
       print("Error fetching detail by url: $e");
-      Get.snackbar("Error", "Something went wrong");
+      Get.snackbar(
+        "Error",
+        "Something went wrong",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -71,7 +87,12 @@ class TransactionDetailController extends GetxController {
       final data = response.body['data'] ?? response.body;
       transaction.value = TransactionModel.fromJson(data, type: type);
     } else {
-      Get.snackbar("Error", "Failed to detailed transaction");
+      Get.snackbar(
+        "Error",
+        "Failed to detailed transaction",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

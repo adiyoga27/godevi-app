@@ -263,7 +263,12 @@ class NotificationController extends GetxController {
     } catch (e) {
       Get.back(); // Close loading dialog
       print("Error fetching detail: $e");
-      Get.snackbar("Error", "An error occurred");
+      Get.snackbar(
+        "Error",
+        "An error occurred",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 

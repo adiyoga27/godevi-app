@@ -80,10 +80,17 @@ class ProfileController extends GetxController {
         Get.snackbar(
           "Error",
           response.body['message'] ?? "Failed to update profile",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred: $e");
+      Get.snackbar(
+        "Error",
+        "An error occurred: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

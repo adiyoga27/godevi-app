@@ -15,12 +15,22 @@ class ChangePasswordController extends GetxController {
     final confirmPass = confirmPasswordController.text;
 
     if (newPass.isEmpty || confirmPass.isEmpty) {
-      Get.snackbar('Error', 'Please fill in all fields');
+      Get.snackbar(
+        'Error',
+        'Please fill in all fields',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
     if (newPass != confirmPass) {
-      Get.snackbar('Error', 'Passwords do not match');
+      Get.snackbar(
+        'Error',
+        'Passwords do not match',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -63,12 +73,22 @@ class ChangePasswordController extends GetxController {
           );
         }
       } else {
-        Get.snackbar('Error', 'Server Error: ${response.statusCode}');
+        Get.snackbar(
+          'Error',
+          'Server Error: ${response.statusCode}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       isLoading.value = false;
       print('Error changing password: $e');
-      Get.snackbar('Error', 'An error occurred');
+      Get.snackbar(
+        'Error',
+        'An error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 

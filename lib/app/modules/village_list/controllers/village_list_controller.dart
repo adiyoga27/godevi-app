@@ -48,10 +48,21 @@ class VillageListController extends GetxController {
           }
         }
       } else {
-        Get.snackbar('Error', 'Failed to load villages');
+        Get.snackbar(
+          'Error',
+          'Failed to load villages',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       print('Error fetching villages: $e');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

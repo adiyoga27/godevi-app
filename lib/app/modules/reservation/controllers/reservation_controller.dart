@@ -97,7 +97,12 @@ class ReservationController extends GetxController {
 
   void navigateToDetail(TransactionModel transaction) {
     if (transaction.uuid == null || transaction.type == null) {
-      Get.snackbar("Error", "Invalid transaction data");
+      Get.snackbar(
+        "Error",
+        "Invalid transaction data",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
     Get.toNamed(
@@ -118,7 +123,12 @@ class ReservationController extends GetxController {
     }
 
     if (urlString == null) {
-      Get.snackbar("Error", "Payment link unavailable");
+      Get.snackbar(
+        "Error",
+        "Payment link unavailable",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -148,7 +158,12 @@ class ReservationController extends GetxController {
         // Call API
         try {
           if (transaction.code == null) {
-            Get.snackbar("Error", "Invalid transaction code");
+            Get.snackbar(
+              "Error",
+              "Invalid transaction code",
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
             return;
           }
           final response = await _apiProvider.cancelTransaction(
@@ -167,6 +182,8 @@ class ReservationController extends GetxController {
             Get.snackbar(
               "Success",
               response.body['message'] ?? "Transaction cancelled successfully",
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
             );
 
             // Refresh list
@@ -180,10 +197,17 @@ class ReservationController extends GetxController {
             Get.snackbar(
               "Error",
               response.body['message'] ?? "Failed to cancel transaction",
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
             );
           }
         } catch (e) {
-          Get.snackbar("Error", "Failed to cancel transaction: $e");
+          Get.snackbar(
+            "Error",
+            "Failed to cancel transaction: $e",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         } finally {
           isLoading.value = false;
         }

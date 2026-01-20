@@ -225,7 +225,12 @@ class SearchView extends GetView<app.SearchController> {
           break;
         default:
           Get.back(); // Close loading
-          Get.snackbar('Error', 'Unknown item type: ${item.type}');
+          Get.snackbar(
+            'Error',
+            'Unknown item type: ${item.type}',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
           return;
       }
 

@@ -135,7 +135,12 @@ class BookingController extends GetxController {
         emailController.text.isEmpty ||
         addressController.text.isEmpty ||
         paxController.text.isEmpty) {
-      Get.snackbar("Error", "Please fill all required fields");
+      Get.snackbar(
+        "Error",
+        "Please fill all required fields",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -159,7 +164,12 @@ class BookingController extends GetxController {
         response = await _apiProvider.checkoutEvent(data);
       } else if (isHomestay) {
         if (dateController.text.isEmpty) {
-          Get.snackbar("Error", "Please select check-in date");
+          Get.snackbar(
+            "Error",
+            "Please select check-in date",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
           isLoading.value = false;
           return;
         }
@@ -170,7 +180,12 @@ class BookingController extends GetxController {
         // Fallback: Assume it's a Tour if not Event or Homestay
         print("DEBUG: defaulted to Tour checkout.");
         if (dateController.text.isEmpty) {
-          Get.snackbar("Error", "Please select check-in date");
+          Get.snackbar(
+            "Error",
+            "Please select check-in date",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
           isLoading.value = false;
           return;
         }
@@ -212,7 +227,12 @@ class BookingController extends GetxController {
             print("Error initializing MainController: $e");
           }
         } else {
-          Get.snackbar("Success", "Booking Success but no payment link found.");
+          Get.snackbar(
+            "Success",
+            "Booking Success but no payment link found.",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
           await Get.offAllNamed(Routes.HOME);
           // Same logic for redirection
           if (Get.isRegistered<MainController>()) {
@@ -220,10 +240,20 @@ class BookingController extends GetxController {
           }
         }
       } else {
-        Get.snackbar("Error", response.body['message'] ?? "Checkout Failed");
+        Get.snackbar(
+          "Error",
+          response.body['message'] ?? "Checkout Failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred: $e");
+      Get.snackbar(
+        "Error",
+        "An error occurred: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
