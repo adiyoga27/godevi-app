@@ -63,13 +63,14 @@ class RegisterController extends GetxController {
           colorText: Colors.white,
         );
       } else {
+        Get.back(); // Go back to login
+
         Get.snackbar(
           'Success',
           'Registration successful. Please login.',
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.back(); // Go back to login
       }
     } catch (e) {
       Get.snackbar(

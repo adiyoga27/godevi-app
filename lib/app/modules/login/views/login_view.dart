@@ -4,6 +4,7 @@ import 'package:godevi_app/app/modules/login/controllers/login_controller.dart';
 import 'package:godevi_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:godevi_app/app/routes/app_pages.dart';
 import 'package:godevi_app/core/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({Key? key}) : super(key: key);
@@ -114,7 +115,15 @@ class LoginView extends GetView<LoginController> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  const url = 'https://godestinationvillage.com/password/reset';
+                  if (await canLaunchUrl(Uri.parse(url))) {
+                    await launchUrl(
+                      Uri.parse(url),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                },
                 child: Text(
                   'Forgot your password ?',
                   style: TextStyle(color: Colors.grey[400], fontSize: 12),

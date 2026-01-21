@@ -9,6 +9,8 @@ class UserModel {
   String? token;
   int? id;
 
+  String? provider;
+
   UserModel({
     this.email,
     this.name,
@@ -19,6 +21,7 @@ class UserModel {
     this.avatar,
     this.token,
     this.id,
+    this.provider,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +34,7 @@ class UserModel {
     role = json['role'];
     avatar = json['avatar'];
     token = json['token'];
+    provider = json['provider'];
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +48,7 @@ class UserModel {
     data['avatar'] = avatar;
     data['token'] = token;
     data['id'] = id;
+    data['provider'] = provider;
     return data;
   }
 }

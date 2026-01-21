@@ -133,6 +133,9 @@ class AuthController extends GetxController {
         if (userData.name == null || userData.name!.isEmpty)
           userData.name = name;
 
+        // Set provider for local storage
+        userData.provider = provider;
+
         _authService.login(
           userData,
         ); // This saves user AND sets isLoggedIn = true

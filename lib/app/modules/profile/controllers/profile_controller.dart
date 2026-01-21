@@ -97,7 +97,12 @@ class ProfileController extends GetxController {
   }
 
   Future<void> logout() async {
-    await _authService.logout();
-    Get.offAllNamed(Routes.HOME);
+    try {
+      await _authService.logout().timeout(const Duration(seconds: 5));
+    } catch (e) {
+      print("Logout error: $e");
+    } finally {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 }

@@ -78,12 +78,14 @@ class ProfileView extends GetView<ProfileController> {
             ),
             const SizedBox(height: 40),
 
-            _buildMenuItem(
-              title: 'Change Password',
-              icon: Icons.vpn_key_outlined,
-              onTap: () => Get.toNamed(Routes.CHANGE_PASSWORD),
-            ),
-            _buildDivider(),
+            if (controller.user?.provider == null) ...[
+              _buildMenuItem(
+                title: 'Change Password',
+                icon: Icons.vpn_key_outlined,
+                onTap: () => Get.toNamed(Routes.CHANGE_PASSWORD),
+              ),
+              _buildDivider(),
+            ],
             _buildMenuItem(
               title: 'About',
               icon: Icons.info_outline_rounded,
